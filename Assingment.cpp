@@ -2831,12 +2831,12 @@ void tri() {
 	glVertex3f(-0.15, 0.0, 0);
 	glEnd();
 
-	glBegin(GL_QUADS);
-	glVertex3f(-0.15, 0.065, -0.05);
-	glVertex3f(-0.15, 0, -0.05);
-	glVertex3f(-0.15, 0.065, 0.1);
-	glVertex3f(-0.15, 0, 0.1);
-	glEnd();
+	//glBegin(GL_QUADS);
+	//glVertex3f(-0.15, 0.065, -0.05);
+	//glVertex3f(-0.15, 0, -0.05);
+	//glVertex3f(-0.15, 0.065, 0.1);
+	//glVertex3f(-0.15, 0, 0.1);
+	//glEnd();
 
 }
 
@@ -2868,13 +2868,15 @@ void bodyMid(float width) {
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.15, -0.2, 0);
+	glTranslatef(-0.135, -0.2, 0);
+	glScalef(0.9, 1, 1);
 	glColor3f(0, 0, 1);
 	drawCube(0.3, 0.1, width + 0.05);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.15, -0.3, 0);
+	glTranslatef(-0.12, -0.3, 0);
+	glScalef(0.8, 1, 1);
 	glColor3f(0, 0, 1);
 	drawCube(0.3, 0.1, width + 0.05);
 	glPopMatrix();
@@ -2885,8 +2887,8 @@ void bodySide(float width) {
 	glColor3f(1, 1, 0);
 	//Face 1£º front
 	glVertex3f(0.15, 0.07f, -0.05);
-	glVertex3f(0.15, -0.07, -0.05);
-	glVertex3f(0.45f, 0.05f, 0.025);
+	glVertex3f(0.15, -0.07, 0);
+	glVertex3f(0.45f, 0.05f, 0.03);
 	glVertex3f(0.45, 0.2, 0.025);
 
 
@@ -2894,8 +2896,8 @@ void bodySide(float width) {
 	//Face 2£º right
 	glColor3f(1, 0, 1);
 	glVertex3f(0.45, 0.2, 0.025);
-	glVertex3f(0.45f, 0.05f, 0.025);
-	glVertex3f(0.45f, 0.05f, width - 0.025);
+	glVertex3f(0.45f, 0.05f, 0.03);
+	glVertex3f(0.45f, 0.05f, width - 0.03);
 	glVertex3f(0.45, 0.2, width - 0.025);
 
 
@@ -2909,35 +2911,53 @@ void bodySide(float width) {
 	glColor3f(0, 0, 1);
 	glVertex3f(0.15, 0.07f, width + 0.05);
 	glVertex3f(0.15, 0.07f, -0.05);
-	glVertex3f(0.15, -0.07, -0.05);
-	glVertex3f(0.15, -0.07, width + 0.05);
+	glVertex3f(0.15, -0.07, 0);
+	glVertex3f(0.15, -0.07, width);
 
 
 	//Face 5£º behind
 	glColor3f(0, 1, 0);
-	glVertex3f(0.15, -0.07, width + 0.05);
+	glVertex3f(0.15, -0.07, width);
 	glVertex3f(0.15, 0.07f, width + 0.05);
 	glVertex3f(0.45, 0.2, width - 0.025);
-	glVertex3f(0.45, 0.05, width - 0.025);
+	glVertex3f(0.45, 0.05, width - 0.03);
 
 	//Face 6£º bottom
 	glColor3f(0, 0, 0);
-	glVertex3f(0.45, 0.05, width - 0.025);
-	glVertex3f(0.45, 0.05, 0.025);
-	glVertex3f(0.15, -0.07, -0.05);
-	glVertex3f(0.15, -0.07, width + 0.05);
+	glVertex3f(0.45, 0.05, width - 0.03);
+	glVertex3f(0.45, 0.05, 0.03);
+	glVertex3f(0.15, -0.07, 0);
+	glVertex3f(0.15, -0.07, width);
 
 	glEnd();
+
+	glPushMatrix();
+	glTranslatef(-0.43, 0.13, 0.01);
+	drawCylinder(0.01, 0.01, 0.17, 50, 50);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.4, 0.1, 0.01);
+	drawCylinder(0.01, 0.01, 0.18, 50, 50);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.37, 0.08, 0.01);
+	drawCylinder(0.01, 0.01, 0.19, 50, 50);
+	glPopMatrix();
+
 }
 
 void bodyRight(float width) {
 	bodySide(width);
 	glPushMatrix();
+	glScalef(0.9, 0.95, 1);
 	glTranslatef(0, -0.13, 0);
 	bodySide(width);
 	glPopMatrix();
 	glPushMatrix();
 	glTranslatef(0, -0.26, 0);
+	glScalef(0.8, 0.9, 1);
 	bodySide(width);
 	glPopMatrix();
 }
@@ -2988,6 +3008,13 @@ void lowerBody(float width) {
 	glVertex3f(-0.3, -0.5f, width);
 
 	glEnd();
+
+	glPushMatrix();
+	glTranslatef(-0.2, -0.3, -0.1);
+	glColor3f(0, 0, 1);
+	drawCylinder(0.05, 0.05, 0.5, 30, 30);
+	glPopMatrix();
+
 }
 
 void neck(float width) {
@@ -3015,6 +3042,16 @@ void neck(float width) {
 void body(float width) {
 	bodyUp(width);
 	bodyUpMid(width);
+
+	glPushMatrix();
+	glTranslatef(-0.25, 0.2, -0.045);
+	drawCylinder(0.05, 0.05, 0.05, 30, 30);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.25, 0.2, -0.055);
+	drawCylinder(0.05, 0.05, 0.05, 30, 30);
+	glPopMatrix();
 
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
@@ -3058,6 +3095,7 @@ void body(float width) {
 	glPopMatrix();
 
 	thruster();
+
 }
 
 void face(float width) {

@@ -26,8 +26,8 @@ float actShoulderRight, actShoulderLeft;
 
 // Weapon
 bool gunShow = false, gunBig = false, weaponShow = false, weaponBig = false;
-float gunSp = 0.001, gunTransUp, gunTransFront, gunTransNear, gunScale;
-float weaponSp = 0.001, weaponTransUp, weaponTransFront, weaponScale;
+float gunSp = 0.005, gunTransUp, gunTransFront, gunTransNear, gunScale;
+float weaponSp = 0.005, weaponTransUp, weaponTransFront, weaponScale;
 
 //Leg
 bool walkRight, walkLeft;
@@ -171,13 +171,13 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		if (isOrtho) {
 			if (orthoview < 5)
 				orthoview += 0.5;
-		}
+			}
 		}
 		else if (wParam == 0xBB) {		// key +
 		if (isOrtho) {
 			if (orthoview > 1)
 				orthoview -= 0.5;
-		}
+			}
 		}
 		break;
 	default:
@@ -992,12 +992,12 @@ void UpHand(float sizex, float sizey, float sizez) {
 
 	glPushMatrix();
 	glTranslatef(0.1, 0.07, 0.07);
-	GLUquadricObj* sphere = NULL;          //sphere 1 connect
-	sphere = gluNewQuadric();
+	GLUquadricObj* connector = NULL;          //sphere 1 connect
+	connector = gluNewQuadric();
 	//glColor3f(1, 1, 1);
-	gluQuadricDrawStyle(sphere, GLU_FILL);
-	gluSphere(sphere, 0.07, 30, 30);
-	gluDeleteQuadric(sphere);
+	gluQuadricDrawStyle(connector, GLU_FILL);
+	gluSphere(connector, 0.07, 30, 30);
+	gluDeleteQuadric(connector);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -1028,6 +1028,12 @@ void UpHand(float sizex, float sizey, float sizez) {
 	glEnd();
 	glPopMatrix();
 
+	glPushMatrix();
+	glColor3f(1, 1, 1);
+	glTranslatef(0.5, 0.08, 0.08);
+		glScalef(1, 0.4, 0.4);
+		sphere(0.3);
+	glPopMatrix();
 	glPushMatrix();             //Big Quads Arm
 	glTranslatef(0.2, 0, 0);
 	      
@@ -1336,6 +1342,14 @@ void palm(float sizex, float sizey, float sizez) {
 void thumb(float sizex, float sizey, float sizez) {
 	glPushMatrix();
 	glTranslatef(0.5, 0.2, 0.1);
+
+	glPushMatrix();                          //fingertip
+	glTranslatef(0.025, -0.01, 0.02);
+	glScalef(0.8, 1, 0.8);
+
+	glColor3f(1, 0, 0);
+	sphere(0.03);
+	glPopMatrix();
 
 	glBegin(GL_QUADS);
 
@@ -1665,7 +1679,7 @@ void leftHand() {
 
 	glPushMatrix();
 	if (finger == true) {//&& leftHandMove == true) {
-		if (actRotatThumbLeft <= 90) {           //rotate thumb
+		if (actRotatThumbLeft <= 90) {                     //rotate thumb
 			actRotatThumbLeft += rotatThumb;
 		}
 		glTranslatef(0, 0, 0.1);
@@ -1673,7 +1687,7 @@ void leftHand() {
 		glTranslatef(0, 0, -0.1);
 	}
 	else if (finger == false) {//&& leftHandMove == true) {
-		if (actRotatThumbLeft > 0) {           //rotate thumb
+		if (actRotatThumbLeft > 0) {                    //rotate thumb
 			actRotatThumbLeft -= rotatThumb;
 		}
 		glTranslatef(0, 0, 0.1);
@@ -1709,6 +1723,12 @@ void leftHand() {
 
 	robotFinger(0.5, 0.7, 0.5);
 
+	glPushMatrix();
+		glTranslatef(0.83, 0.02, 0.12);
+		glScalef(1, 0.8, 0.8);
+		glColor3f(1, 0, 0);
+		sphere(0.03);
+	glPopMatrix();
 	/////////////////////////
 	glPushMatrix();
 	glTranslatef(0.05, 0, 0);
@@ -2036,7 +2056,7 @@ void upLeg() {
 	glVertex3f(0, 0.4, 0.4);
 	glVertex3f(0, 0.25, 0.4);
 
-	//Face 3 : Front                 //ok
+	//Face 3 : Front                 
 	glColor3f(0, 0, 1);
 	glVertex3f(0, 0.4, 0.4);
 	glVertex3f(0, 0.25, 0.4);
@@ -2050,7 +2070,7 @@ void upLeg() {
 	glVertex3f(0.35, 0.5, 0);
 	glVertex3f(0.35, 0.4, 0.4);
 
-	//Face 5 : Top                     //ok
+	//Face 5 : Top                     
 	glColor3f(0, 1, 1);
 	glVertex3f(0.35, 0.4, 0.4);
 	glVertex3f(0, 0.4, 0.4);
@@ -2297,11 +2317,15 @@ void upLeg() {
 	glPopMatrix();*/
 	glPopMatrix();
 
-	glPushMatrix();            //up leg back Thruster
-	glColor3f(1, 0, 0);
-	glTranslatef(0.13, 0.36, 0.16);
-	glRotatef(35, 1, 0, 0);
-	cylinder(0.01, 0.07, 0.1);
+	glPushMatrix();                  //up leg back Thruster
+		glTranslatef(0.13, 0.36, 0.16);
+		glRotatef(35, 1, 0, 0);
+
+		glColor3f(1, 0, 0);
+		cylinder(0.01, 0.07, 0.1);
+
+		glColor3f(1, 0.871, 0);
+		cylinder(0.01, 0.069, 0.1);
 
 	GLUquadric* cylinder = NULL;
 	cylinder = gluNewQuadric();
@@ -2831,12 +2855,12 @@ void tri() {
 	glVertex3f(-0.15, 0.0, 0);
 	glEnd();
 
-	//glBegin(GL_QUADS);
-	//glVertex3f(-0.15, 0.065, -0.05);
-	//glVertex3f(-0.15, 0, -0.05);
-	//glVertex3f(-0.15, 0.065, 0.1);
-	//glVertex3f(-0.15, 0, 0.1);
-	//glEnd();
+	glBegin(GL_QUADS);
+	glVertex3f(-0.15, 0.065, -0.05);
+	glVertex3f(-0.15, 0, -0.05);
+	glVertex3f(-0.15, 0.065, 0.1);
+	glVertex3f(-0.15, 0, 0.1);
+	glEnd();
 
 }
 
@@ -2868,15 +2892,13 @@ void bodyMid(float width) {
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.135, -0.2, 0);
-	glScalef(0.9, 1, 1);
+	glTranslatef(-0.15, -0.2, 0);
 	glColor3f(0, 0, 1);
 	drawCube(0.3, 0.1, width + 0.05);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.12, -0.3, 0);
-	glScalef(0.8, 1, 1);
+	glTranslatef(-0.15, -0.3, 0);
 	glColor3f(0, 0, 1);
 	drawCube(0.3, 0.1, width + 0.05);
 	glPopMatrix();
@@ -3008,13 +3030,6 @@ void lowerBody(float width) {
 	glVertex3f(-0.3, -0.5f, width);
 
 	glEnd();
-
-	glPushMatrix();
-	glTranslatef(-0.2, -0.3, -0.1);
-	glColor3f(0, 0, 1);
-	drawCylinder(0.05, 0.05, 0.5, 30, 30);
-	glPopMatrix();
-
 }
 
 void neck(float width) {
@@ -3042,16 +3057,6 @@ void neck(float width) {
 void body(float width) {
 	bodyUp(width);
 	bodyUpMid(width);
-
-	glPushMatrix();
-	glTranslatef(-0.25, 0.2, -0.045);
-	drawCylinder(0.05, 0.05, 0.05, 30, 30);
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(0.25, 0.2, -0.055);
-	drawCylinder(0.05, 0.05, 0.05, 30, 30);
-	glPopMatrix();
 
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
@@ -3095,7 +3100,6 @@ void body(float width) {
 	glPopMatrix();
 
 	thruster();
-
 }
 
 void face(float width) {
@@ -3351,13 +3355,15 @@ void display()
 		glLoadIdentity();
 
 		glPushMatrix();
-		GLuint texture;
+		/*GLuint texture;
 
 		texture = loadTexture("black steel.bmp");
 		cylinderTexture();
 
 		glDeleteTextures(1, &texture);
-		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);*/
+
+		leftHand();
 		glPopMatrix();
 		break;
 	}

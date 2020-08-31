@@ -2596,33 +2596,8 @@ void drawsphere() {
 	gluDeleteQuadric(sphere);
 }
 
-void drawsphere1() {
-	GLUquadricObj* sphere = NULL;
-	sphere = gluNewQuadric();
 
-	gluQuadricDrawStyle(sphere, GLU_FILL);
-	gluSphere(sphere, 0.04, 20, 20);
-	gluDeleteQuadric(sphere);
-}
 
-void drawsphere2() {
-	glColor3f(0.25, 0.1, 0.01);
-	GLUquadricObj* sphere = NULL;
-	sphere = gluNewQuadric();
-
-	gluQuadricDrawStyle(sphere, GLU_FILL);
-	gluSphere(sphere, 0.01, 20, 20);
-	gluDeleteQuadric(sphere);
-}
-
-void drawCone1() {
-	GLUquadricObj* cylinder = NULL;
-	cylinder = gluNewQuadric();
-
-	gluQuadricDrawStyle(cylinder, GLU_FILL);
-	gluCylinder(cylinder, 0.01, 0.2, 0.8, 30, 30);
-	gluDeleteQuadric(cylinder);
-};
 
 void drawCone() {
 	glColor3f(0, 0, 0);
@@ -2663,6 +2638,16 @@ void drawCylinder(float baseRadius, float topRadius, float height, int slices, i
 
 };
 
+void drawCylinderLine(float baseRadius, float topRadius, float height, int slices, int stacks) {
+	GLUquadricObj* cylinder = NULL;
+	cylinder = gluNewQuadric();
+
+	gluQuadricDrawStyle(cylinder, GLU_LINE);
+	gluCylinder(cylinder, baseRadius, topRadius, height, slices, stacks);
+	gluDeleteQuadric(cylinder);
+
+};
+
 void thruster() {
 	glPushMatrix();
 	glTranslatef(-0.2, 0.25, 0.35);
@@ -2674,52 +2659,88 @@ void thruster() {
 	glColor3f(0, 0, 0);
 	glPushMatrix();
 	glTranslatef(0.09, 0.15, 0.36);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, 0.15, 0.36);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
 	glPopMatrix();
 
 
 	glPushMatrix();
 	glTranslatef(0.09, 0, 0.36);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, 0, 0.36);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.09, -0.15, 0.36);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, -0.15, 0.36);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, -0.15, 0.36);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
 	glPopMatrix();
 
-	//	glPopMatrix();
+	//	below
 	glPushMatrix();
 	glRotatef(90, 1, 0, 0);
 
 	glPushMatrix();
 	glTranslatef(-0.09, 0.3, 0.251);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.01);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.01, 10, 1);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.09, 0.3, 0.251);
-	drawCircle(0.05);
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.01);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.01, 10, 1);
 	glPopMatrix();
 
 	glPopMatrix();
@@ -2845,22 +2866,36 @@ void tri() {
 
 
 	glBegin(GL_TRIANGLES);
-	glColor3f(1, 0, 0);
+	glColor3f(1, 0, 1);
 	glVertex3f(0.0, 0, -0.1);
 	glVertex3f(-0.15, 0, -0.05);
 	glVertex3f(-0.15, 0.065, -0.05);
+	glEnd();
 	//bottom
+	glBegin(GL_TRIANGLES);
 	glVertex3f(0.0, 0, -0.1);
 	glVertex3f(-0.15, 0, -0.05);
 	glVertex3f(-0.15, 0.0, 0);
 	glEnd();
 
-	glBegin(GL_QUADS);
-	glVertex3f(-0.15, 0.065, -0.05);
-	glVertex3f(-0.15, 0, -0.05);
-	glVertex3f(-0.15, 0.065, 0.1);
-	glVertex3f(-0.15, 0, 0.1);
+
+	glBegin(GL_TRIANGLES);
+	glColor3f(1, 1, 1);
+	glVertex3f(0.0, 0, -0.1);
+	glVertex3f(-0.15, 0, 0);
+	glVertex3f(0, 0, 0);
+	//bottom
+	glVertex3f(0.0, 0, -0.1);
+	glVertex3f(0.15, 0, 0);
+	glVertex3f(0, 0, 0);
 	glEnd();
+
+	//glBegin(GL_QUADS);
+	//glVertex3f(-0.15, 0.065, -0.05);
+	//glVertex3f(-0.15, 0, -0.05);
+	//glVertex3f(-0.15, 0.065, 0.1);
+	//glVertex3f(-0.15, 0, 0.1);
+	//glEnd();
 
 }
 
@@ -3030,6 +3065,13 @@ void lowerBody(float width) {
 	glVertex3f(-0.3, -0.5f, width);
 
 	glEnd();
+
+	glPushMatrix();
+	glColor3f(1, 0, 1);
+	glTranslatef(-0.2, -0.3, -0.1);
+	drawCylinder(0.05, 0.05, 0.4, 30, 30);
+	glPopMatrix();
+
 }
 
 void neck(float width) {
@@ -3057,6 +3099,40 @@ void neck(float width) {
 void body(float width) {
 	bodyUp(width);
 	bodyUpMid(width);
+
+	glPushMatrix();
+	glTranslatef(-0.245, 0.2, -0.045);
+	glColor3f(1, 1, 0);
+	drawCircle(0.035);
+	glColor3f(0, 0, 0);
+	glTranslatef(0, 0, -0.001);
+	drawCircle(0.03);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.25, 0.2, -0.06);
+	glColor3f(1, 1, 0);
+	cylinder(0.05, 0.02, 0.05);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.049, 0.019, 0.049, 7, 2);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.245, 0.2, -0.06);
+	glColor3f(1, 1, 0);
+	drawCircle(0.035);
+	glColor3f(0, 0, 0);
+	glTranslatef(0, 0, -0.001);
+	drawCircle(0.03);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.25, 0.2, -0.075);
+	glColor3f(1, 1, 0);
+	cylinder(0.05, 0.02, 0.05);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.049, 0.019, 0.049, 7, 2);
+	glPopMatrix();
 
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
@@ -3100,6 +3176,7 @@ void body(float width) {
 	glPopMatrix();
 
 	thruster();
+
 }
 
 void face(float width) {

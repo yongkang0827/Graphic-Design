@@ -40,6 +40,15 @@ float walking, walkingSp = 0.0001;
 //Body
 float angle = 0;
 float x1 = 0, y3 = 0, x2 = 0, y2 = 0;
+float sliding = 0;
+float slideMove = 0;
+
+//head
+float headRotatex = 0;
+float headRotatey = 0;
+
+//thruster
+bool isTurbo = false;
 
 //Projection
 bool isOrtho = true;
@@ -145,11 +154,14 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		else if (wParam == 0x53)    //key S = view rotate
 			Rx += rSpeed;
 
-		else if (wParam == VK_UP)         //ty
+		else if (wParam == VK_UP) {  
+			isTurbo = true;
 			ty += tSpeed;
-		else if (wParam == VK_DOWN)
+		}
+		else if (wParam == VK_DOWN) {
+			isTurbo = false;
 			ty -= tSpeed;
-
+		}
 		else if (wParam == VK_LEFT)         //tx
 			tx -= tSpeed;
 		else if (wParam == VK_RIGHT)
@@ -165,33 +177,42 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			fingerRight = false;
 			elbowRight = false;
 			shoulderTurnRight = false;
+			headRotatex = 0;
+			headRotatey = 0;
 		}
 
 		else if (wParam == 0x5A)      //key z = object z 
 		{
-			if (isOrtho) {
-				if (tz < 1.0) {
-					tz += tSpeed;
-				}
-			}
-			else {
-				if (tz < 1.0) {
-					tz += tSpeed;
-				}
-			}
+		isTurbo = true;
+		sliding = 20;
+		slideMove += 0.5;
+
+			//if (isOrtho) {
+			//	if (tz < 1.0) {
+			//		tz += tSpeed;
+			//	}
+			//}
+			//else {
+			//	if (tz < 1.0) {
+			//		tz += tSpeed;
+			//	}
+			//}
 		}
 		else if (wParam == 0x58)      //key x
 		{
-			if (isOrtho) {
-				if (tz > -1.0) {
-					tz -= tSpeed;
-				}
-			}
-			else {
-				if (tz > -1.0) {
-					tz -= tSpeed;
-				}
-			}
+		isTurbo = true;
+		sliding = -20;
+		slideMove -= 0.5;
+		//if (isOrtho) {
+			//	if (tz > -1.0) {
+			//		tz -= tSpeed;
+			//	}
+			//}
+			//else {
+			//	if (tz > -1.0) {
+			//		tz -= tSpeed;
+			//	}
+			//}
 		}
 		///////////////////////////////yong 
 		else if (wParam == 0xBD) {		// key -
@@ -206,6 +227,24 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 					orthoview -= 0.5;
 			}
 		}
+		//head rotate
+		else if (wParam == 'C') {
+		if (headRotatex > -20)
+			headRotatex -= 0.5;
+		}
+		else if (wParam == 'V') {
+		if (headRotatex < 20)
+			headRotatex += 0.5;
+		}
+		else if (wParam == 'B') {
+		if (headRotatey < 5)
+			headRotatey += 0.5;
+		}
+		else if (wParam == 'N') {
+		if (headRotatey > -3)
+			headRotatey -= 0.5;
+		}
+
 		break;
 	default:
 		break;
@@ -2629,13 +2668,12 @@ void drawsphere() {
 	gluDeleteQuadric(sphere);
 }
 
-void drawCone() {
-	glColor3f(0, 0, 0);
+void drawCone(float topRadius, float height, int slices, int stacks) {
 	GLUquadricObj* cylinder = NULL;
 	cylinder = gluNewQuadric();
 
-	gluQuadricDrawStyle(cylinder, GLU_LINE);
-	gluCylinder(cylinder, 0.01, 0.2, 0.8, 30, 30);
+	gluQuadricDrawStyle(cylinder, GLU_POINT);
+	gluCylinder(cylinder, 0.01, topRadius, height, slices, stacks);
 	gluDeleteQuadric(cylinder);
 };
 
@@ -2668,6 +2706,16 @@ void drawCylinder(float baseRadius, float topRadius, float height, int slices, i
 
 };
 
+void drawCylinder2(float baseRadius, float topRadius, float height, int slices, int stacks) {
+	GLUquadricObj* cylinder = NULL;
+	cylinder = gluNewQuadric();
+
+	gluQuadricDrawStyle(cylinder, GLU_POINT);
+	gluCylinder(cylinder, baseRadius, topRadius, height, slices, stacks);
+	gluDeleteQuadric(cylinder);
+};
+
+
 void drawCylinderLine(float baseRadius, float topRadius, float height, int slices, int stacks) {
 	GLUquadricObj* cylinder = NULL;
 	cylinder = gluNewQuadric();
@@ -2677,6 +2725,23 @@ void drawCylinderLine(float baseRadius, float topRadius, float height, int slice
 	gluDeleteQuadric(cylinder);
 
 };
+
+void turbo() {
+	glColor3f(1, 1, 0);
+	drawCircle(0.03);
+	cylinder(0.03, 0.05, 0.02);
+	glColor3f(0, 0, 0);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	if (isTurbo) {
+		glColor3f(0, 0, 1);
+		drawCone(0.05, 0.05, 50, 50);
+		glPushMatrix();
+		glTranslatef(0, 0, 0.05);
+		//	glRotatef(180, 1, 0, 0);
+		drawCylinder2(0.048, 0.02, 0.03, 50, 50);
+		glPopMatrix();
+	}
+}
 
 void thruster() {
 	glPushMatrix();
@@ -2689,66 +2754,38 @@ void thruster() {
 	glColor3f(0, 0, 0);
 	glPushMatrix();
 	glTranslatef(0.09, 0.15, 0.36);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.02);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, 0.15, 0.36);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.02);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	turbo();
 	glPopMatrix();
 
 
 	glPushMatrix();
 	glTranslatef(0.09, 0, 0.36);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.02);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, 0, 0.36);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.02);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.09, -0.15, 0.36);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.02);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, -0.15, 0.36);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.02);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.09, -0.15, 0.36);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.02);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	//	below
@@ -2757,20 +2794,12 @@ void thruster() {
 
 	glPushMatrix();
 	glTranslatef(-0.09, 0.3, 0.251);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.01);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.01, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.09, 0.3, 0.251);
-	glColor3f(1, 1, 0);
-	drawCircle(0.03);
-	cylinder(0.03, 0.05, 0.01);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.01, 10, 1);
+	turbo();
 	glPopMatrix();
 
 	glPopMatrix();
@@ -3138,7 +3167,7 @@ void body(float width) {
 	glTranslatef(0, 0, -0.001);
 	drawCircle(0.03);
 	glPopMatrix();
-
+	//////////////////////////////////////////thruster
 	glPushMatrix();
 	glTranslatef(-0.25, 0.2, -0.06);
 	glColor3f(1, 1, 0);
@@ -3155,7 +3184,7 @@ void body(float width) {
 	glTranslatef(0, 0, -0.001);
 	drawCircle(0.03);
 	glPopMatrix();
-
+	////////////////////////////////////////
 	glPushMatrix();
 	glTranslatef(0.25, 0.2, -0.075);
 	glColor3f(1, 1, 0);
@@ -3179,7 +3208,7 @@ void body(float width) {
 	glTranslatef(0, 0, -width);
 	bodyRight(width);
 	glPopMatrix();
-
+	//lowerbody
 	glPushMatrix();
 	glTranslatef(0, -0.03, 0);
 	lowerBody(width);
@@ -3191,6 +3220,25 @@ void body(float width) {
 	glPopMatrix();
 	glPopMatrix();
 
+	glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glTranslatef(-0.2, -0.56, 0.3);
+	drawCube(0.2, 0.15, 0.05);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.34, -0.56, 0.2);
+	glRotatef(90, 0, 1, 0);
+	drawCube(0.2, 0.15, 0.05);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.05, -0.53, 0.3);
+	glRotatef(90, 0, 1, 0);
+	drawCube(0.4, 0.1, 0.1);
+	glPopMatrix();
+
+	//
 	glPushMatrix();
 	glRotatef(180, -1, 0, 0);
 	glTranslatef(0, 0.3, -width);
@@ -3214,24 +3262,24 @@ void face(float width) {
 	glBegin(GL_QUADS);
 	glColor3f(0, 0, 1);
 	//Face 1£º front
-	glVertex3f(0, -0.27, -0.05);
+	glVertex3f(0, -0.27, 0);
 	glVertex3f(-0.1, -0.35, 0);
 	glVertex3f(-0.05, -0.5f, 0);
-	glVertex3f(0, -0.55, -0.05);
+	glVertex3f(0, -0.55, 0);
 
 	//Face 2£º right
 	glColor3f(1, 0, 1);
-	glVertex3f(0, -0.55, -0.05);
-	glVertex3f(0, -0.55, width + 0.05);
-	glVertex3f(0, -0.27, width + 0.05);
-	glVertex3f(0, -0.27, -0.05);
+	glVertex3f(0, -0.55, 0);
+	glVertex3f(0, -0.55, width);
+	glVertex3f(0, -0.27, width);
+	glVertex3f(0, -0.27, 0);
 
 
 	//Face 3£º top
 	glColor3f(0, 0, 0);
 	glVertex3f(-0.1, -0.35, 0);
-	glVertex3f(0, -0.27, -0.05);
-	glVertex3f(0, -0.27, width + 0.05);
+	glVertex3f(0, -0.27, 0);
+	glVertex3f(0, -0.27, width);
 	glVertex3f(-0.1, -0.35, width);
 	//Face 4£º left
 	glColor3f(0, 0, 1);
@@ -3245,77 +3293,82 @@ void face(float width) {
 	glColor3f(0, 1, 0);
 	glVertex3f(-0.05, -0.5f, width);
 	glVertex3f(-0.1, -0.35, width);
-	glVertex3f(0, -0.27, width + 0.05);
-	glVertex3f(0, -0.55, width + 0.05);
+	glVertex3f(0, -0.27, width);
+	glVertex3f(0, -0.55, width);
 
 	//Face 6£º bottom
 	glColor3f(0, 0, 0);
-	glVertex3f(0, -0.55, width + 0.05);
-	glVertex3f(0, -0.55, -0.05);
+	glVertex3f(0, -0.55, width);
+	glVertex3f(0, -0.55, 0);
 	glVertex3f(-0.05, -0.5f, 0);
 	glVertex3f(-0.05, -0.5f, width);
 
 	glEnd();
+
 
 }
 
 void mouth() {
 	glBegin(GL_QUADS);
 	glColor3f(0, 0, 0);
-	glVertex3f(-0.015, -0.45, -0.02);
-	glVertex3f(-0.05, -0.45, 0);
-	glVertex3f(-0.05, -0.47, 0);
-	glVertex3f(0.01, -0.47, -0.02);
+	glVertex3f(-0.015, -0.45, -0.025);
+	glVertex3f(-0.05, -0.45, 0.02);
+	glVertex3f(-0.05, -0.47, 0.02);
+	glVertex3f(0.01, -0.47, -0.025);
 	glEnd();
 
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
 	glBegin(GL_QUADS);
 	glColor3f(0, 0, 0);
-	glVertex3f(-0.015, -0.45, 0.02);
-	glVertex3f(-0.05, -0.45, 0);
-	glVertex3f(-0.05, -0.47, 0);
-	glVertex3f(0.01, -0.47, 0.02);
+	glVertex3f(-0.015, -0.45, 0.025);
+	glVertex3f(-0.05, -0.45, -0.04);
+	glVertex3f(-0.05, -0.47, -0.04);
+	glVertex3f(0.01, -0.47, 0.025);
 	glEnd();
 	glPopMatrix();
 
+	//LEFT
 	glBegin(GL_QUADS);
 	glColor3f(0, 0, 0);
 	glVertex3f(0, -0.5, -0.02);
-	glVertex3f(-0.05, -0.5, 0);
-	glVertex3f(-0.05, -0.475, 0);
-	glVertex3f(0, -0.475, -0.02);
+	glVertex3f(-0.05, -0.5, 0.03);
+	glVertex3f(-0.05, -0.475, 0.02);
+	glVertex3f(0, -0.475, -0.015);
 	glEnd();
 
 	glBegin(GL_QUADS);
 	glColor3f(0, 0, 0);
-	glVertex3f(0, -0.505, -0.02);
-	glVertex3f(-0.05, -0.505, 0);
-	glVertex3f(-0.05, -0.525, 0);
-	glVertex3f(0, -0.525, -0.02);
+	glVertex3f(0, -0.505, -0.01);
+	glVertex3f(-0.05, -0.505, 0.06);
+	glVertex3f(-0.05, -0.525, 0.05);
+	glVertex3f(0, -0.525, -0.01);
 	glEnd();
 
+	//RIGHT
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
 	glBegin(GL_QUADS);
-	glBegin(GL_QUADS);
 	glColor3f(0, 0, 0);
 	glVertex3f(0, -0.5, 0.02);
-	glVertex3f(-0.05, -0.5, 0);
-	glVertex3f(-0.05, -0.475, 0);
-	glVertex3f(0, -0.475, 0.02);
+	glVertex3f(-0.05, -0.5, -0.06);
+	glVertex3f(-0.05, -0.475, -0.05);
+	glVertex3f(0, -0.475, 0.015);
 	glEnd();
 
+
+	glBegin(GL_QUADS);
 	glBegin(GL_QUADS);
 	glColor3f(0, 0, 0);
-	glVertex3f(0, -0.505, 0.02);
-	glVertex3f(-0.05, -0.505, 0);
-	glVertex3f(-0.05, -0.525, 0);
-	glVertex3f(0, -0.525, 0.02);
+	glVertex3f(0, -0.505, 0.01);
+	glVertex3f(-0.05, -0.505, -0.07);
+	glVertex3f(-0.05, -0.525, -0.06);
+	glVertex3f(0, -0.525, 0.01);
 	glEnd();
 	glPopMatrix();
 
 }
+
 
 void head(float width) {
 	glPushMatrix();
@@ -3323,8 +3376,8 @@ void head(float width) {
 	glScalef(1.2, 1.2, 1);
 
 	glPushMatrix();
-	glTranslatef(0, -0.55, -0.05);
-	drawCube(0.05, 0.28, width + 0.1);
+	glTranslatef(0, -0.55, 0);
+	drawCube(0.05, 0.28, width);
 	glPopMatrix();
 
 	face(width);
@@ -3334,25 +3387,61 @@ void head(float width) {
 	face(width);
 	glPopMatrix();
 
+
+	//glBegin(GL_QUADS);
+	//glColor3f(1, 0, 0);
+	////Face 1£º top
+	//glVertex3f(0.025, -0.249, 0.15);
+	//glVertex3f(-0.1, -0.349, 0.1);
+	//glVertex3f(-0.1, -0.349, -0.05);
+	//glVertex3f(0.025, -0.249, -0.1);
+
+	//glVertex3f(0.025, -0.249, 0.15);
+	//glVertex3f(0.15, -0.349, 0.1);
+	//glVertex3f(0.15, -0.349, -0.05);
+	//glVertex3f(0.025, -0.249, -0.1);
+
+	//glEnd();
+
+	glBegin(GL_TRIANGLES);
+	glColor3f(1, 0, 0);
+	//Face 1£º top
+	glVertex3f(-0.1, -0.349, 0);
+	glVertex3f(0.027, -0.23, 0);
+	glVertex3f(0.027, -0.4, -0.17);
+
+
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	glColor3f(1, 0, 0);
+	//Face 1£º top
+	glVertex3f(0.027, -0.23, 0);
+	glVertex3f(0.027, -0.4, -0.17);
+	glVertex3f(0.16, -0.349, 0);
+
+	glEnd();
+
+
+
 	//eye
 	glPushMatrix();
-	glTranslatef(0.03, 0, -0.05);
+	glColor3f(1, 1, 0);
+	glTranslatef(0.03, -0.07, 0.02);
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
-	glVertex3f(0, -0.36, -0.01);
-	glVertex3f(-0.05, -0.34, 0);
-	glVertex3f(-0.07, -0.37, 0);
-	glVertex3f(0, -0.4, -0.01);
+	glVertex3f(0, -0.33, -0.2);
+	glVertex3f(-0.13, -0.28, -0.02);
+	glVertex3f(-0.12, -0.35, -0.02);
+	glVertex3f(0, -0.39, -0.15);
 	glEnd();
 
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
-	glVertex3f(0, -0.36, 0.01);
-	glVertex3f(-0.05, -0.34, 0);
-	glVertex3f(-0.07, -0.37, 0);
-	glVertex3f(0, -0.4, 0.01);
+	glVertex3f(0, -0.33, 0.2);
+	glVertex3f(-0.13, -0.28, 0.02);
+	glVertex3f(-0.12, -0.35, 0.02);
+	glVertex3f(0, -0.39, 0.15);
 	glEnd();
 	glPopMatrix();
 	glPopMatrix();
@@ -3362,6 +3451,7 @@ void head(float width) {
 	glPushMatrix();
 	glRotatef(-20, 0, 0, 1);
 	glTranslatef(0.26, -0.35, 0);
+	glColor3f(0, 0, 0);
 	drawCube(0.02, 0.15, 0.05);
 	glPopMatrix();
 
@@ -3374,7 +3464,7 @@ void head(float width) {
 
 	//mouth
 	glPushMatrix();
-	glTranslatef(0.03, 0, -0.05);
+	glTranslatef(0.03, -0.01, -0.095);
 	mouth();
 	glPopMatrix();
 
@@ -3383,8 +3473,31 @@ void head(float width) {
 	//glTranslatef(0, 0, 0.02);
 	//mouth();
 	//glPopMatrix();
-
 	glPopMatrix();
+
+	//MASK
+	glPushMatrix();
+	glTranslatef(0, 0, -0.02);
+	glBegin(GL_QUADS);
+	glColor3f(1, 0, 0);
+	glVertex3f(-0.06, -0.525, 0.025);
+	glVertex3f(-0.095, -0.4, 0.02);
+	glVertex3f(0.03, -0.45, -0.1);
+	glVertex3f(0.03, -0.6, -0.05);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, 0, -0.02);
+	glBegin(GL_QUADS);
+	glColor3f(1, 0, 1);
+	glVertex3f(0.12, -0.525, 0.025);
+	glVertex3f(0.16, -0.4, 0.025);
+	glVertex3f(0.03, -0.45, -0.1);
+	glVertex3f(0.03, -0.6, -0.05);
+	glEnd();
+	glPopMatrix();
+
 
 
 }
@@ -3401,6 +3514,8 @@ void headAndBody() {
 
 	glPushMatrix();
 	glTranslatef(-0.02, 1.3, 0.05);
+	glRotatef(headRotatex, 0, 1, 0);
+	glRotatef(headRotatey, 1, 0, 0);
 	head(0.1);
 	glPopMatrix();
 	glPopMatrix();
@@ -3446,11 +3561,23 @@ void display()
 			walking += walkingSp;
 		}
 		glTranslatef(0, 0, walking);
-
+		glTranslatef(0, 0, slideMove);
+		glRotatef(sliding, 1, 0, 0);
 		headAndBody();
 		hand();
 		leg();
 		glPopMatrix();
+		if (sliding == 20) {
+			isTurbo=false;
+			for(int i=0;i<sliding;sliding--)
+			sliding -= 0.01;
+		}
+		else if (sliding == -20) {
+			isTurbo = false;
+			for (int i = 0; i > sliding; sliding++)
+				sliding += 0.01;
+		}
+
 		break;
 	}
 	case 2:

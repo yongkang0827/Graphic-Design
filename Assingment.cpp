@@ -7,7 +7,7 @@
 
 #define WINDOW_TITLE "Robot"
 
-int qNo = 1;
+int qNo = 2;
 
 //Arm
 char arm = 's';
@@ -399,13 +399,13 @@ void drawCubeTexture(float length, float width, float height, LPCSTR filename) {
 	glVertex3f(length, width, 0.0f);
 
 	//Face 6 : Back
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(length, width, 0.0f);
 	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(length, width, 0.0f);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(length, 0.0f, 0.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
 	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(0.0f, width, 0.0f);
 	glEnd();
 
@@ -1504,34 +1504,34 @@ void weapon()
 	/////////////////////////////////////handle
 	glPushMatrix();
 	glRotatef(270, 1, 0, 0);
-	cylinderTexture(0.05, 0.05, 1.5, "handle.bmp");
+	cylinderTexture(0.05, 0.05, 1.5, "weaponHandle.bmp");
 	glPopMatrix();
 
 	////////////////////////////////////////////////sphere fill handle at back
 	glPushMatrix();
 	glTranslatef(0, 1.47, 0);
-	sphereTexture(0.05, "handle.bmp");
+	sphereTexture(0.05, "weaponHandle.bmp");
 	glPopMatrix();
 
 	//////////////////////////////////////in front handle
 	glPushMatrix();
 	glTranslatef(-0.3, -0.2, 0);
 	glRotatef(90, 0, 1, 0);
-	cylinderTexture(0.2, 0.2, 0.6, "logo.bmp");
+	cylinderTexture(0.2, 0.2, 0.6, "weaponLogo.bmp");
 	glPopMatrix();
 
 	//////////////////////////////////////top left in front handle, red color one
 	glPushMatrix();
 	glTranslatef(-0.3, -0.2, 0);
 	glRotatef(90, 0, 1, 0);
-	cylinderTexture(0.205, 0.205, 0.15, "logo.bmp");
+	cylinderTexture(0.205, 0.205, 0.15, "weaponLogo.bmp");
 	glPopMatrix();
 
 	//////////////////////////////////////top right in front handle
 	glPushMatrix();
 	glTranslatef(0.15, -0.2, 0);
 	glRotatef(90, 0, 1, 0);
-	cylinderTexture(0.205, 0.205, 0.15, "logo.bmp");
+	cylinderTexture(0.205, 0.205, 0.15, "weaponLogo.bmp");
 	glPopMatrix();
 
 	////////////////////////////////////////////////right side sphere to fill cylinder 
@@ -1548,24 +1548,10 @@ void weapon()
 	sphereTexture(0.2, "weapon.bmp");
 	glPopMatrix();
 
-	//////////////////////////////////////////////square on weapon front
-	/*glPushMatrix();                    //first
-	glTranslatef(-0.05, -0.3, -0.18);
-	glRotatef(-20.5, 1, 0, 0);
-	drawCube(0.1, 0.1, 0.1);
-	glPopMatrix();
-
-	//////////////////////////////////////////////square on weapon back
-	glPushMatrix();                    //second
-	glTranslatef(-0.05, -0.3, 0.08);
-	glRotatef(20.5, 1, 0, 0);
-	drawCube(0.1, 0.1, 0.1);
-	glPopMatrix();*/
-
 	////////////////////////////////////////////////////////connect handle and hammer
 	glPushMatrix();
 	glRotatef(270, 1, 0, 0);
-	cylinderTexture(0.07, 0.052, 0.1, "front handle.bmp");
+	cylinderTexture(0.07, 0.052, 0.1, "weaponFront.bmp");
 	glPopMatrix();
 	glPopMatrix();
 }
@@ -1603,12 +1589,11 @@ void gunShoot() {
 	glPushMatrix();
 	glTranslatef(0.8, 0.035, 0.05);
 	glRotatef(-90, 0, 1, 0);
+	cylinderTexture(0.001, 0.023, 0.05, "bullet.bmp");
 
-	glColor3f(1, 1, 0);
-	cylinder(0.001, 0.023, 0.05);
 	glPushMatrix();
 	glTranslatef(0, 0, 0.05);
-	cylinder(0.023, 0.023, 0.1);
+	cylinderTexture(0.023, 0.023, 0.1, "bullet.bmp");
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
@@ -1634,36 +1619,32 @@ void gun() {
 	}
 
 	//////////////////////////////////////////////////front part
-	glColor3f(1, 0, 0);
-	drawCube(0.35, 0.2, 0.1);
+	drawCubeTexture(0.35, 0.2, 0.1, "gunFront.bmp");
 
 	//////////////////////////////////////////////////////hand to hold
 	glPushMatrix();
 	glRotatef(5, 0, 0, 1);
 	glTranslatef(0.4, 0.01, 0.05);
 	glScalef(1.3, 0.5, 0.35);
-	glColor3f(1, 1, 1);
-	sphere(0.15);
+	sphereTexture(0.15, "gunFrFrHandle.bmp");
 	glPopMatrix();
 
 	/////////////////////////////////////////////////////down
 	glPushMatrix();
 	glTranslatef(0.2, -0.03, -0.02);
-	drawCube(0.2, 0.13, 0.13);
+	drawCubeTexture(0.2, 0.13, 0.13, "gunFrFrHandle.bmp");
 	glPopMatrix();
 
 	/////////////////////////////////////////////////////front
 	glPushMatrix();
 	glTranslatef(0.25, 0.06, -0.005);
-	glColor3f(0, 1, 0);
-	drawCube(0.3, 0.15, 0.11);
+	drawCubeTexture(0.3, 0.15, 0.11, "gunFrontUp.bmp");
 	glPopMatrix();
 
 	/////////////////////////////////////////////front up
 	glPushMatrix();
 	glTranslatef(0.55, 0.05, -0.005);
-	glColor3f(0, 0, 1);
-	drawCube(0.2, 0.15, 0.11);
+	drawCubeTexture(0.2, 0.15, 0.11, "gunFrontUp.bmp");
 	glPopMatrix();
 
 	///////////////////////////////////////front down
@@ -1671,26 +1652,22 @@ void gun() {
 	glTranslatef(0.55, 0.05, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 0, 0);
-	cylinder(0.05, 0.05, 0.17);
+	cylinderTexture(0.05, 0.05, 0.17, "gunFrontUp.bmp");
 	glPopMatrix();
 
-	/////////////////////////////////////////place on back to shoot
+	/////////////////////////////////////////place back and to shoot
 	glPushMatrix();
 	glTranslatef(0.65, 0.035, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(0, 1, 0);
-	cylinder(0.025, 0.025, 0.25);
+	cylinderTexture(0.025, 0.025, 0.25, "gunAim.bmp");
 	glPopMatrix();
 
-	/////////////////////////////////////////place to shoot
 	glPushMatrix();
 	glTranslatef(0.9, 0.035, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	cylinder(0.035, 0.035, 0.1);
+	cylinderTexture(0.035, 0.035, 0.1, "gunShoot.bmp");
 	glPopMatrix();
 
 	/////////////////////////////////////////place to aim
@@ -1698,35 +1675,30 @@ void gun() {
 	glTranslatef(0.75, 0.15, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 0, 0);
-	cylinder(0.025, 0.025, 0.05);
+	cylinderTexture(0.025, 0.025, 0.05, "gunAim.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.7, 0.24, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 0, 0);
-	cylinder(0.04, 0.04, 0.03);
+	cylinderTexture(0.04, 0.04, 0.03, "gunAim.bmp");
 	glPopMatrix();
 
 	///////////////////////////////////body
 	glPushMatrix();
 	glTranslatef(-0.5, -0.05, 0);
-	glColor3f(0, 0, 1);
-	drawCube(0.5, 0.2, 0.1);
+	drawCubeTexture(0.5, 0.2, 0.1, "gunBody.bmp");
 	glPopMatrix();
 
 	//////////////////////////////////body down
 	glPushMatrix();
 	glTranslatef(-0.17, -0.15, 0);
-	glColor3f(1, 0, 0);
-	drawCube(0.15, 0.1, 0.1);
+	drawCubeTexture(0.15, 0.1, 0.1, "gunFrHandle.bmp");
 
 	glPushMatrix();
 	glTranslatef(0.02, -0.15, 0);
-	glColor3f(0, 1, 0);
-	drawCube(0.11, 0.15, 0.1);
+	drawCubeTexture(0.11, 0.15, 0.1, "gunFrHandle.bmp");
 	glPopMatrix();
 	glPopMatrix();
 
@@ -1735,75 +1707,62 @@ void gun() {
 	glTranslatef(-0.34, 0.23, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(0, 1, 0);
-	cylinder(0.02, 0.02, 0.3);
+	cylinderTexture(0.02, 0.02, 0.3, "gunBodyUp.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.01, 0.135, 0.05);
 	glRotatef(30, 0, 0, 1);
 	glRotatef(270, 1, 0, 0);
-	cylinder(0.02, 0.02, 0.12);
+	cylinderTexture(0.02, 0.02, 0.12, "gunBodyUp.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.44, 0.135, 0.05);
 	glRotatef(50, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	cylinder(0.02, 0.02, 0.15);
+	cylinderTexture(0.02, 0.02, 0.15, "gunBodyUp.bmp");
 	glPopMatrix();
 
 	///////////////////////////////handle
 	glPushMatrix();
 	glTranslatef(-0.4, -0.3, 0.05);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	cylinder(0.035, 0.035, 0.3);//////////////////////////////////handle = 0.05
+	cylinderTexture(0.035, 0.035, 0.3, "gunHandle.bmp");
 	glPopMatrix();
-
-	////////////////////////////////trigger
-	/*glPushMatrix();
-	glTranslatef(-0.27, -0.1, 0.05);
-	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	cylinder(0.025, 0.025, 0.05);
-	glPopMatrix();*/
 
 	///////////////////////////////////////back
 	glPushMatrix();                     //up
 	glTranslatef(-0.9, 0.1, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 0, 0);
-	cylinder(0.02, 0.02, 0.4);
+	cylinderTexture(0.02, 0.02, 0.4, "gunBodyBack.bmp");
 	glPopMatrix();
 
 	glPushMatrix();                     //down
 	glTranslatef(-0.7, 0, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	glColor3f(1, 0, 0);
-	cylinder(0.02, 0.02, 0.2);
+	cylinderTexture(0.02, 0.02, 0.2, "gunBodyBack.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.8, -0.06, 0.05);
 	glRotatef(60, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	cylinder(0.02, 0.02, 0.13);
+	cylinderTexture(0.02, 0.02, 0.13, "gunBodyBack.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-0.89, -0.06, 0.05);
 	glRotatef(90, 0, 0, -1);
 	glRotatef(270, 1, 0, 0);
-	cylinder(0.02, 0.02, 0.1);
+	cylinderTexture(0.02, 0.02, 0.1, "gunBodyBack.bmp");
 	glPopMatrix();
 
 	glPushMatrix();      //back
 	glTranslatef(-0.93, -0.08, 0.02);
-	glColor3f(1, 1, 1);
-	drawCube(0.05, 0.2, 0.05);
+	drawCubeTexture(0.05, 0.2, 0.05, "gunBodyBackBk.bmp");
 	glPopMatrix();
 	glPopMatrix();
 }
@@ -3320,8 +3279,6 @@ void display()
 		sphereTexture(0.2, "grey metal.bmp");
 		drawCubeTexture(0.2, 0.2, 0.2, "Rusty Black Steel.bmp");
 		cylinderTexture(0.01, 0.2, 0.3, "white.bmp");*/
-		weaponBig = true;
-		weapon();
 		glPopMatrix();
 		break;
 	}

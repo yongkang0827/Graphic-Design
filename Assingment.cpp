@@ -797,63 +797,97 @@ void tri(LPCSTR filename) {
 	glVertex3f(0.15, 0, -0.05);
 	glTexCoord2f(0, 0);
 	glVertex3f(0.15, 0.065, -0.05);
-	//bottom
+	//back
+	glColor3f(1, 1, 0);
 	glTexCoord2f(1, 1);
-	glVertex3f(0.0, 0, -0.1);
+	glVertex3f(0.15, 0, 0.05);
 	glTexCoord2f(1, 0);
-	glVertex3f(0.15, 0, -0.05);
+	glVertex3f(0.0, 0, 0.1);
 	glTexCoord2f(0, 0);
-	glVertex3f(0.15, 0.0, 0);
+	glVertex3f(0.15, 0.065, 0.05);
 	glEnd();
-
+	//right
 	glBegin(GL_QUADS);
+	glColor3f(1, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.15, 0.065, -0.05);
 	glTexCoord2f(1, 1);
+	glVertex3f(0.15, 0.065, 0.05);
+	glTexCoord2f(1, 0);
+	glVertex3f(0.15, 0, 0.05);
+	glTexCoord2f(0, 0);
 	glVertex3f(0.15, 0, -0.05);
-	glTexCoord2f(1, 0);
-	glVertex3f(0.15, 0.065, 0.1);
-	glTexCoord2f(0, 0);
-	glVertex3f(0.15, 0, 0.1);
-	glEnd();
-
-
-	glBegin(GL_TRIANGLES);
-	glColor3f(1, 0, 1);
-	glTexCoord2f(1, 1);
-	glVertex3f(0.0, 0, -0.1);
-	glTexCoord2f(1, 0);
-	glVertex3f(-0.15, 0, -0.05);
-	glTexCoord2f(0, 0);
-	glVertex3f(-0.15, 0.065, -0.05);
-	glEnd();
 	//bottom
-	glBegin(GL_TRIANGLES);
+	glColor3f(0, 0, 1);
+	glTexCoord2f(0, 1);
+	glVertex3f(0, 0, 0.1);
 	glTexCoord2f(1, 1);
 	glVertex3f(0.0, 0, -0.1);
 	glTexCoord2f(1, 0);
-	glVertex3f(-0.15, 0, -0.05);
+	glVertex3f(0.15, 0, -0.05);
 	glTexCoord2f(0, 0);
-	glVertex3f(-0.15, 0.0, 0);
+	glVertex3f(0.15, 0, 0.05);
+	//top
+	glColor3f(0, 1, 0);
+	glTexCoord2f(0, 1);
+	glVertex3f(0, 0, 0.1);
+	glTexCoord2f(1, 1);
+	glVertex3f(0, 0, -0.1);
+	glTexCoord2f(1, 0);
+	glVertex3f(0.15, 0.065, -0.05);
+	glTexCoord2f(0, 0);
+	glVertex3f(0.15, 0.065, 0.05);
+
 	glEnd();
 
+	//glBegin(GL_QUADS);
+	//glTexCoord2f(0, 1);
+	//glVertex3f(0.15, 0.065, -0.05);
+	//glTexCoord2f(1, 1);
+	//glVertex3f(0.15, 0, -0.05);
+	//glTexCoord2f(1, 0);
+	//glVertex3f(0.15, 0.065, 0.1);
+	//glTexCoord2f(0, 0);
+	//glVertex3f(0.15, 0, 0.1);
+	//glEnd();
 
-	glBegin(GL_TRIANGLES);
-	glColor3f(1, 1, 1);
-	glTexCoord2f(1, 1);
-	glVertex3f(0.0, 0, -0.1);
-	glTexCoord2f(1, 0);
-	glVertex3f(-0.15, 0, 0);
-	glTexCoord2f(0, 0);
-	glVertex3f(0, 0, 0);
-	//bottom
-	glTexCoord2f(1, 1);
-	glVertex3f(0.0, 0, -0.1);
-	glTexCoord2f(1, 0);
-	glVertex3f(0.15, 0, 0);
-	glTexCoord2f(0, 0);
-	glVertex3f(0, 0, 0);
-	glEnd();
+
+	//glBegin(GL_TRIANGLES);
+	//glColor3f(1, 0, 1);
+	//glTexCoord2f(1, 1);
+	//glVertex3f(0.0, 0, -0.1);
+	//glTexCoord2f(1, 0);
+	//glVertex3f(-0.15, 0, -0.05);
+	//glTexCoord2f(0, 0);
+	//glVertex3f(-0.15, 0.065, -0.05);
+	//glEnd();
+	////bottom
+	//glBegin(GL_TRIANGLES);
+	//glTexCoord2f(1, 1);
+	//glVertex3f(0.0, 0, -0.1);
+	//glTexCoord2f(1, 0);
+	//glVertex3f(-0.15, 0, -0.05);
+	//glTexCoord2f(0, 0);
+	//glVertex3f(-0.15, 0.0, 0);
+	//glEnd();
+
+
+	//glBegin(GL_TRIANGLES);
+	//glColor3f(1, 1, 1);
+	//glTexCoord2f(1, 1);
+	//glVertex3f(0.0, 0, -0.1);
+	//glTexCoord2f(1, 0);
+	//glVertex3f(-0.15, 0, 0);
+	//glTexCoord2f(0, 0);
+	//glVertex3f(0, 0, 0);
+	////bottom
+	//glTexCoord2f(1, 1);
+	//glVertex3f(0.0, 0, -0.1);
+	//glTexCoord2f(1, 0);
+	//glVertex3f(0.15, 0, 0);
+	//glTexCoord2f(0, 0);
+	//glVertex3f(0, 0, 0);
+	//glEnd();
 
 	//glBegin(GL_QUADS);
 	//glVertex3f(-0.15, 0.065, -0.05);
@@ -874,7 +908,7 @@ void bodyMidTri(float width, LPCSTR filename) {
 
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
-	glTranslatef(0, 0, -width);
+//	glTranslatef(0, 0, 0.1);
 	tri(filename);
 	//glPushMatrix();
 	//glTranslatef(0, 0, width);
@@ -888,7 +922,7 @@ void bodyMid(float width, LPCSTR filename1 , LPCSTR filename2) {
 
 	float i, j;
 	glPushMatrix();
-	glScalef(0.5, 0.5, 0.5);
+	glScalef(0.5, 0.6, 0.7);
 	glTranslatef(0, 0, 0.1);
 
 	glPushMatrix();
@@ -1112,7 +1146,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPushMatrix();
 	glColor3f(1, 0, 1);
 	glTranslatef(-0.2, -0.3, -0.1);
-	drawCylinder(0.05, 0.05, 0.4, 30, 30, filename2);
+	drawCylinder(0.07, 0.07, 0.4, 30, 30, filename2);
 	glPopMatrix();
 
 }
@@ -1206,7 +1240,7 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPopMatrix();
 	//lowerbody
 	glPushMatrix();
-	glTranslatef(0, -0.03, 0);
+	glTranslatef(0, -0.08, 0);
 	lowerBody(width, filename1, filename2);
 
 	glPushMatrix();
@@ -1235,11 +1269,11 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPopMatrix();
 
 	//
-	glPushMatrix();
-	glRotatef(180, -1, 0, 0);
-	glTranslatef(0, 0.3, -width);
-	bodyMidTri(width, filename2);
-	glPopMatrix();
+	//glPushMatrix();
+	//glRotatef(180, -1, 0, 0);
+	//glTranslatef(0, 0.3, -width);
+	//bodyMidTri(width, filename2);
+	//glPopMatrix();
 
 	neck(width, filename2);
 

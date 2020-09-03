@@ -533,7 +533,7 @@ void drawCylinder(float baseRadius, float topRadius, float height, int slices, i
 
 };
 
-void drawCylinder2(float baseRadius, float topRadius, float height, int slices, int stacks) {
+void drawCylinder2(float baseRadius, float topRadius, float height, int slices, int stacks) {//use for glu point
 	GLUquadricObj* cylinder = NULL;
 	cylinder = gluNewQuadric();
 
@@ -886,22 +886,44 @@ void bodyMidTri(float width, LPCSTR filename) {
 void bodyMid(float width, LPCSTR filename1 , LPCSTR filename2) {
 	bodyMidTri(width, filename2);
 
+	float i, j;
 	glPushMatrix();
-	glTranslatef(-0.15, -0.1, 0);
-	drawCubeTexture(0.3, 0.1, width + 0.05, filename1);
-	glPopMatrix();
+	glScalef(0.5, 0.5, 0.5);
+	glTranslatef(0, 0, 0.1);
 
 	glPushMatrix();
-	glTranslatef(-0.15, -0.2, 0);
-	glColor3f(0, 0, 1);
-	drawCubeTexture(0.3, 0.1, width + 0.05, filename1);
+	glRotatef(90, 1, 0, 0);
+	glColor3f(0, 0, 0);
+	drawCylinder(0.2, 0.2, 0.6, 30, 30, filename1);
+	glPopMatrix();
+	for (j = 0.1; j < 0.7; j += 0.1) {
+		for (i = 0; i < 360; i += 30) {
+			glPushMatrix();
+			glRotatef(-i, 0, 1, 0);
+			glTranslatef(0.2, -j, 0);
+			glColor3f(1, 0, 0);
+			drawCubeTexture(0.07, 0.07, 0.07, filename2);
+			glPopMatrix();
+		}
+	}
 	glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(-0.15, -0.3, 0);
-	glColor3f(0, 0, 1);
-	drawCubeTexture(0.3, 0.1, width + 0.05, filename1);
-	glPopMatrix();
+	//glPushMatrix();
+	//glTranslatef(-0.15, -0.1, 0);
+	//drawCubeTexture(0.3, 0.1, width + 0.05, filename1);
+	//glPopMatrix();
+
+	//glPushMatrix();
+	//glTranslatef(-0.15, -0.2, 0);
+	//glColor3f(0, 0, 1);
+	//drawCubeTexture(0.3, 0.1, width + 0.05, filename1);
+	//glPopMatrix();
+
+	//glPushMatrix();
+	//glTranslatef(-0.15, -0.3, 0);
+	//glColor3f(0, 0, 1);
+	//drawCubeTexture(0.3, 0.1, width + 0.05, filename1);
+	//glPopMatrix();
 }
 
 void bodySide(float width, LPCSTR filename) {

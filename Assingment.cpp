@@ -10,32 +10,31 @@
 int qNo = 2;
 
 //Arm
-char arm = 's';
 bool elbowRight = false, elbowLeft = false;
 bool shoulderTurnRight = false, shoulderTurnLeft = false;
-float rotatspeed = 0.3, actRotat;
+bool leftHandMove, rightHandMove;
 
 //finger
 bool fingerRight = false, fingerLeft = false;
-float rotatThumb = 0.3, rotatfinger = 0.3;
+float rotatThumb = 3, rotatfinger = 3;
 float actRotatFingLeft, actRotatFing2Left, actRotatFing3Left;
 float actRotatFingRight, actRotatFing2Right, actRotatFing3Right;
 float actRotatThumbRight, actRotatThumbLeft;
 float actRotateElbowRight, actRotateElbowLeft;
 float actShoulderRight, actShoulderLeft;
 
-// Weapon
-bool gunShow = false, gunBig = false, gunShootMove = false;
-float gunSp = 0.005, gunTransUp, gunTransFront, gunTransNear, gunScale, bulletMove, bulletSp = 0.02;
-bool weaponShow = false, weaponBig = false, weaponAttackMove = false, electricShow = false, weaponAttackDown = false;
-float weaponSp = 0.005, weaponTransUp, weaponTransFront, weaponScale;
+//Weapon
+bool gunShow = false, gunBig = false, gunSmall = false, gunShootMove = false;
+float gunSp = 0.05, gunTransUp, gunTransFront, gunTransNear, gunScale, gunScaleSmall = 1, bulletMove, bulletSp = 1;
+bool weaponShow = false, weaponBig = false, weaponSmall = false, weaponAttackMove = false, electricShow = false, weaponAttackDown = false;
+float weaponSp = 0.05, weaponTransUp, weaponTransFront, weaponScale, weaponScaleSmall = 1;
 int elect = 0, electSp = 1;
 
 //Leg
 bool walkRight, walkLeft;
 float walkRightKnee, walkUpRightKnee, walkLeftKnee, walkUpLeftKnee;
-float walkSpeed = 0.2, walkKneeSpeed = 0.0016;
-float walking, walkingSp = 0.0007;
+float walkSpeed = 2, walkKneeSpeed = 0.016;
+float walking, walkingSp = 0.0064;
 
 //Body
 float angle = 0;
@@ -71,10 +70,9 @@ float lSpeed = 0.1;
 //Texture
 BITMAP BMP;             //bitmap structure
 HBITMAP hBMP = NULL;    //bitmap handle
-LPCSTR bodyText[6] = { "black steel.bmp", "white.bmp" , "metal porcealin.bmp"};
+LPCSTR bodyText[6] = { "black steel.bmp", "white.bmp"};
 LPCSTR jointText[3] = { "white.bmp","Rusty Black Steel.bmp" };
-int changeBody1 = 0, changeBody2 = 1, changeBody3 = 2;
-int changeJoint1 = 0;
+int changeBody1 = 0, changeBody2 = 1, changeJoint1 = 0;
 
 LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -91,68 +89,117 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			qNo = 1;
 		else if (wParam == 0x32)
 			qNo = 2;
-		else if (wParam == 0x37)           //change color
+		else if (wParam == 0x33)        //space to reset
 		{
-			changeBody1 = 1;
-			changeBody2 = 0;
-			changeJoint1 = 1;
+			walkRight = false;
+			walkLeft = false;
+			fingerLeft = false;
+			elbowLeft = false;
+			shoulderTurnLeft = false;
+			fingerRight = false;
+			elbowRight = false;
+			shoulderTurnRight = false;
+			headRotatex = 0;
+			headRotatey = 0;
+			weaponBig = false;
+			gunBig = false;
 		}
 
-		else if (wParam == 0x30)                    //0 = gun
+		else if (wParam == 0x36)                      //change color
 		{
-			gunShow = true;
+			if (changeBody1 == 0) {
+				changeBody1 = 1;
+				changeBody2 = 0;
+				changeJoint1 = 1;
+			}
+			else if (changeBody1 == 1) {
+				changeBody1 = 0;
+				changeBody2 = 1;
+				changeJoint1 = 0;
+			}
 		}
-		else if (wParam == 0x50)                    //p = gun shoot
+		else if (wParam == 0x34) {                     //hand Movement
+			if(leftHandMove == false)
+				leftHandMove = true;
+			else if(leftHandMove == true)
+				leftHandMove = false;
+		}
+		else if (wParam == 0x35) {
+			if (rightHandMove == false)
+				rightHandMove = true;
+			else if (rightHandMove == true)
+				rightHandMove = false;
+		}
+		else if (wParam == 0x52) {                                  //r = finger 
+			if(leftHandMove == true && fingerLeft == false)        //left hand
+				fingerLeft = true;
+			else if (leftHandMove == true && fingerLeft == true)
+				fingerLeft = false;
+
+			if (rightHandMove == true && fingerRight == false) //right hand
+				fingerRight = true;
+			else if (rightHandMove == true && fingerRight == true)
+				fingerRight = false;
+		}
+		else if (wParam == 0x54) {                                  //t = elbow 
+			if (leftHandMove == true && elbowLeft == false)        //left hand
+				elbowLeft = true;
+			else if (leftHandMove == true && elbowLeft == true)
+				elbowLeft = false;
+
+			if (rightHandMove == true && elbowRight == false)  //right hand
+				elbowRight = true;
+			else if (rightHandMove == true && elbowRight == true)
+				elbowRight = false;
+		}
+		else if (wParam == 0x59) {                                     //y = shoulder
+			if (leftHandMove == true && shoulderTurnLeft == false)        //left hand
+				shoulderTurnLeft = true;
+			else if (leftHandMove == true && shoulderTurnLeft == true)
+				shoulderTurnLeft = false;
+
+			if (rightHandMove == true && shoulderTurnRight == false)  //right hand
+				shoulderTurnRight = true;
+			else if (rightHandMove == true && shoulderTurnRight == true)
+				shoulderTurnRight = false;
+		}
+
+		else if (wParam == 0x37) {                  //7 = gun
+			gunShow = true;
+			gunBig = false;
+			gunSmall = false;
+		}
+		else if (wParam == 0x38) {                  //8 = save gun
+			gunSmall = true;
+		}
+		else if (wParam == 0x4F)                    //o = gun shoot
 			gunShootMove = true;
 
-		else if (wParam == 0x39)                    //9 = weapon
-			weaponShow = true;
-		else if (wParam == 0x4F) {              //o = weapon attack
-			weaponAttackMove = true;
+		else if (wParam == 0x39) {                  //9 = weapon
+				weaponShow = true;
+				weaponBig = false;
+				weaponSmall = false;
+		}
+		else if (wParam == 0x30) {                  //0 = weapon////////////////////////////////////////////////////////////////////////////
+			weaponSmall = true;
+		}
+
+		else if (wParam == 0x50) {                 //p = weapon attack
+			if (weaponAttackMove == false) 
+				weaponAttackMove = true;
+			else if (weaponAttackMove == true) {
+				weaponAttackMove = false;
+				weaponAttackDown = false;
+			}
 		}
 		else if (wParam == 0x4D)                  //m = walking
 			walkRight = true;
-
-		else if (wParam == 0x46) {             //f = finger wrap
-			if (fingerRight == false) {
-				fingerRight = true;
-				fingerLeft = true;
-			}
-			else if (fingerRight == true) {
-				fingerRight = false;
-				fingerLeft = false;
-			}
-		}
-		else if (wParam == 0x54) {             //t = left elbow up
-			if (elbowLeft == false)
-				elbowLeft = true;
-			else if (elbowLeft == true)
-				elbowLeft = false;
-		}
-		//else if (wParam == 0x59) {              //y = left shoulder up
-		//	if (shoulderTurnLeft == false)
-		//		shoulderTurnLeft = true;
-		//	else if (shoulderTurnLeft == true)
-		//		shoulderTurnLeft = false;
-		//}
-		//else if (wParam == 0x47) {             //g = right elbow up
-		//	if (elbowRight == false)
-		//		elbowRight = true;
-		//	else if (elbowRight == true)
-		//		elbowRight = false;
-		//}
-		else if (wParam == 0x48) {            //h = right shoulder up
-			if (shoulderTurnRight == false)
-				shoulderTurnRight = true;
-			else if (shoulderTurnRight == true)
-				shoulderTurnRight = false;
-		}
 
 		//////////////////////////////////////////////////////projection
 		else if (wParam == 'Q')    //KEY Q= change view
 		{
 			isOrtho = !isOrtho;
-//			tz = 0;
+			//			tz = 0;
 		}
 
 		else if (wParam == 0x41)    //key A = view rotate
@@ -184,22 +231,6 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			flyingX -= 0.01;
 		else if (wParam == VK_RIGHT)
 			flyingX += 0.01;
-
-		else if (wParam == VK_SPACE)        //space to reset
-		{
-			walkRight = false;
-			walkLeft = false;
-			fingerLeft = false;
-			elbowLeft = false;
-			shoulderTurnLeft = false;
-			fingerRight = false;
-			elbowRight = false;
-			shoulderTurnRight = false;
-			headRotatex = 0;
-			headRotatey = 0;
-			weaponBig = false;
-			gunBig = false;
-		}
 
 		else if (wParam == 0x5A)      //key z = object z 
 		{
@@ -264,30 +295,28 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			if (headRotatey > -3)
 				headRotatey -= 0.5;
 		}
+		//Light
 		else if (wParam == 'I')                          //I = light up
-		lightPosition[1] += lSpeed;
+			lightPosition[1] += lSpeed;
 
 		else if (wParam == 'K')                          //K = light down
-		lightPosition[1] -= lSpeed;
-
+			lightPosition[1] -= lSpeed;
 
 		else if (wParam == 'J')                           //J = light left	
-		lightPosition[0] -= lSpeed;
+			lightPosition[0] -= lSpeed;
 
 		else if (wParam == 'L')                          //L = light right
-		lightPosition[0] += lSpeed;
+			lightPosition[0] += lSpeed;
 
 		else if (wParam == 'Y')                         //Y = light back
-		lightPosition[2] -= lSpeed;
+			lightPosition[2] -= lSpeed;
 
 		else if (wParam == 'U')                         //U = light front
-		lightPosition[2] += lSpeed;
-		else if (wParam == 0x0D)    //space = light
-		{
+			lightPosition[2] += lSpeed;
+		else if (wParam == VK_SPACE)                         //space = light
+			{
 			isLightOn = !isLightOn;
-		}
-
-
+			}
 		break;
 	default:
 		break;
@@ -587,9 +616,9 @@ void drawCylinder(float baseRadius, float topRadius, float height, int slices, i
 };
 
 void drawCylinder2(float baseRadius, float topRadius, float height, int slices, int stacks, LPCSTR filename) {//use for glu point
-	
+
 	GLuint texture;
-	texture = loadTexture(filename);	
+	texture = loadTexture(filename);
 	GLUquadricObj* cylinder = NULL;
 	cylinder = gluNewQuadric();
 
@@ -630,7 +659,7 @@ void turbo(LPCSTR filename) {
 		glPushMatrix();
 		glTranslatef(0, 0, 0.05);
 		//	glRotatef(180, 1, 0, 0);
-		drawCylinder2(0.048, 0.02, 0.03, 30, 30,"fire.bmp");  
+		drawCylinder2(0.048, 0.02, 0.03, 30, 30, "fire.bmp");
 		glPopMatrix();
 	}
 }
@@ -703,8 +732,8 @@ void bodyUp(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-//	glColor3f(1, 0, 0);
-	//Face 1£º front
+	//	glColor3f(1, 0, 0);
+		//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.05, 0.3f, -0.05);
 	glTexCoord2f(1, 1);
@@ -777,8 +806,8 @@ void bodyUpMid(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_TRIANGLES);
-//	glColor3f(0, 0, 1);
-	//Face 1£º front
+	//	glColor3f(0, 0, 1);
+		//Face 1£º front
 	glTexCoord2f(1, 1);
 	glVertex3f(-0.02, 0.1f, -0.075);
 	glTexCoord2f(1, 0);
@@ -789,7 +818,7 @@ void bodyUpMid(float width, LPCSTR filename) {
 
 	//Face 5£º behind
 	glBegin(GL_TRIANGLES);
-//	glColor3f(0, 0, 1);
+	//	glColor3f(0, 0, 1);
 	glVertex3f(-0.02, 0.1f, width + 0.075);
 	glTexCoord2f(1, 0);
 	glVertex3f(0, 0.075f, width + 0.075);
@@ -798,8 +827,8 @@ void bodyUpMid(float width, LPCSTR filename) {
 	glEnd();
 
 	glBegin(GL_QUADS);
-//	glColor3f(1, 1, 1);
-	//Face 1£º front
+	//	glColor3f(1, 1, 1);
+		//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.02, 0.1f, -0.075);
 	glTexCoord2f(1, 1);
@@ -822,8 +851,8 @@ void bodyUpMid(float width, LPCSTR filename) {
 	glEnd();
 
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
-	//Face 1£º front
+	//	glColor3f(0, 0, 0);
+		//Face 1£º front
 
 	glTexCoord2f(0, 1);
 	glVertex3f(0.0f, 0.175f, -0.06);
@@ -853,8 +882,8 @@ void tri(LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_TRIANGLES);
-//	glColor3f(1, 0, 0);
-	//front
+	//	glColor3f(1, 0, 0);
+		//front
 	glTexCoord2f(1, 1);
 	glVertex3f(0.0, 0, -0.1);
 	glTexCoord2f(1, 0);
@@ -872,7 +901,7 @@ void tri(LPCSTR filename) {
 	glEnd();
 	//right
 	glBegin(GL_QUADS);
-//	glColor3f(1, 0, 1);
+	//	glColor3f(1, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.15, 0.065, -0.05);
 	glTexCoord2f(1, 1);
@@ -992,7 +1021,7 @@ void bodyMid(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	glPushMatrix();
 	glRotatef(90, 1, 0, 0);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	drawCylinder(0.2, 0.2, 0.6, 30, 30, filename1);
 	glPopMatrix();
 	for (j = 0.1; j < 0.7; j += 0.1) {
@@ -1000,7 +1029,7 @@ void bodyMid(float width, LPCSTR filename1, LPCSTR filename2) {
 			glPushMatrix();
 			glRotatef(-i, 0, 1, 0);
 			glTranslatef(0.2, -j, 0);
-//			glColor3f(1, 0, 0);
+			//			glColor3f(1, 0, 0);
 			drawCubeTexture(0.07, 0.07, 0.07, filename2);
 			glPopMatrix();
 		}
@@ -1030,8 +1059,8 @@ void bodySide(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-//	glColor3f(1, 1, 0);
-	//Face 1£º front
+	//	glColor3f(1, 1, 0);
+		//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(0.15, 0.07f, -0.05);
 	glTexCoord2f(1, 1);
@@ -1134,8 +1163,8 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	textures[0] = loadTexture(filename1);
 
 	glBegin(GL_QUADS);
-//	glColor3f(1, 1, 0);
-	//Face 1£º front
+	//	glColor3f(1, 1, 0);
+		//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.27, -0.1);
 	glTexCoord2f(1, 1);
@@ -1205,7 +1234,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glDisable(GL_TEXTURE_2D);
 
 	glPushMatrix();
-//	glColor3f(1, 0, 1);
+	//	glColor3f(1, 0, 1);
 	glTranslatef(-0.2, -0.3, -0.1);
 	drawCylinder(0.07, 0.07, 0.4, 30, 30, filename2);
 	glPopMatrix();
@@ -1217,7 +1246,7 @@ void neck(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, 0.29, (width / 2) - 0.15);
 	glTexCoord2f(1, 1);
@@ -1252,35 +1281,35 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	glPushMatrix();
 	glTranslatef(-0.245, 0.2, -0.045);
-//	glColor3f(1, 1, 0);
+	//	glColor3f(1, 1, 0);
 	drawCircle(0.035);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTranslatef(0, 0, -0.001);
 	drawCircle(0.03);
 	glPopMatrix();
 	//////////////////////////////////////////thruster
 	glPushMatrix();
 	glTranslatef(-0.25, 0.2, -0.06);
-//	glColor3f(1, 1, 0);
+	//	glColor3f(1, 1, 0);
 	cylinder(0.05, 0.02, 0.05);
-//	glColor3f(0, 0, 0);
-	drawCylinderLine(0.049, 0.019, 0.049, 7, 2,"weaponHandle.bmp");
+	//	glColor3f(0, 0, 0);
+	drawCylinderLine(0.049, 0.019, 0.049, 7, 2, "weaponHandle.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.245, 0.2, -0.06);
-//	glColor3f(1, 1, 0);
+	//	glColor3f(1, 1, 0);
 	drawCircle(0.035);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTranslatef(0, 0, -0.001);
 	drawCircle(0.03);
 	glPopMatrix();
 	////////////////////////////////////////
 	glPushMatrix();
 	glTranslatef(0.25, 0.2, -0.075);
-//	glColor3f(1, 1, 0);
+	//	glColor3f(1, 1, 0);
 	cylinder(0.05, 0.02, 0.05);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	drawCylinderLine(0.049, 0.019, 0.049, 7, 2, "weaponHandle.bmp");
 	glPopMatrix();
 
@@ -1353,8 +1382,8 @@ void face(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 1);
-	//Face 1£º front
+	//	glColor3f(0, 0, 1);
+		//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.27, 0);
 	glTexCoord2f(1, 1);
@@ -1431,7 +1460,7 @@ void mouth(LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.015, -0.45, -0.025);
 	glTexCoord2f(1, 1);
@@ -1445,7 +1474,7 @@ void mouth(LPCSTR filename) {
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.015, -0.45, 0.025);
 	glTexCoord2f(1, 1);
@@ -1459,7 +1488,7 @@ void mouth(LPCSTR filename) {
 
 	//LEFT
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.5, -0.02);
 	glTexCoord2f(1, 1);
@@ -1471,7 +1500,7 @@ void mouth(LPCSTR filename) {
 	glEnd();
 
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.505, -0.01);
 	glTexCoord2f(1, 1);
@@ -1486,7 +1515,7 @@ void mouth(LPCSTR filename) {
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.5, 0.02);
 	glTexCoord2f(1, 1);
@@ -1500,7 +1529,7 @@ void mouth(LPCSTR filename) {
 
 	glBegin(GL_QUADS);
 	glBegin(GL_QUADS);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.505, 0.01);
 	glTexCoord2f(1, 1);
@@ -1616,7 +1645,7 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	//eye
 	glPushMatrix();
-//	glColor3f(1, 1, 0);
+	//	glColor3f(1, 1, 0);
 	glTranslatef(0.03, -0.07, 0.02);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 1);
@@ -1649,7 +1678,7 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPushMatrix();
 	glRotatef(-20, 0, 0, 1);
 	glTranslatef(0.26, -0.35, 0);
-//	glColor3f(0, 0, 0);
+	//	glColor3f(0, 0, 0);
 	drawCube(0.02, 0.15, 0.05);
 	glPopMatrix();
 
@@ -1672,7 +1701,7 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	//mouth();
 	//glPopMatrix();
 	glPopMatrix();
-	
+
 
 	glDeleteTextures(1, &textures[1]);
 	glDisable(GL_TEXTURE_2D);
@@ -1860,10 +1889,12 @@ void weaponAttack() {
 void weapon()
 {
 	glPushMatrix();
-	if (weaponBig == true) {
+	if (weaponBig == true && weaponSmall == false) {
 		if (weaponScale < 1) {
 			weaponScale += weaponSp;
-
+			weaponTransUp = 0;
+			weaponTransFront = 0;
+			weaponScaleSmall = 1;
 		}
 		glTranslatef(0.6, -1, 0.05);
 		glScalef(weaponScale, weaponScale, weaponScale);
@@ -1872,10 +1903,18 @@ void weapon()
 			weaponAttack();
 		}
 	}
-	if (weaponBig == false) {
+	if (weaponBig == false && weaponSmall == false) {
 		glTranslatef(0.4, 0.05, 0.07);
 		glScalef(0.2, 0.1, 0.2);
 	}
+	if (weaponSmall == true) {
+		if (weaponScaleSmall > 0) {
+			weaponScaleSmall -= weaponSp;
+		}
+		glTranslatef(0.6, -1, 0.05);
+		glScalef(weaponScaleSmall, weaponScaleSmall, weaponScaleSmall);
+	}
+
 	/////////////////////////////////////handle
 	glPushMatrix();
 	glRotatef(270, 1, 0, 0);
@@ -1947,6 +1986,7 @@ void weaponTrans() {
 	if (weaponTransFront > 0.15) {
 		weaponBig = true;
 		weaponShow = false;
+		weaponScale = 0;
 	}
 	weapon();
 	glPopMatrix();
@@ -1956,10 +1996,12 @@ void weaponTrans() {
 //////////////////////////////////////Gun
 void gunShoot() {
 	glPushMatrix();
-	if (bulletMove < 3) {
-		bulletMove += bulletSp;
-		glTranslatef(bulletMove, 0, 0);
-	}
+	if (bulletMove < 3) 
+		bulletMove += bulletSp;	
+	else 
+		bulletMove = 0;
+
+	glTranslatef(bulletMove, 0, 0);
 
 	glPushMatrix();
 	glTranslatef(0.8, 0.035, 0.05);
@@ -1976,21 +2018,36 @@ void gunShoot() {
 
 void gun() {
 	glPushMatrix();
-	if (gunBig == true) {
+	if (gunBig == true && gunSmall == false) {
 		if (gunScale < 1) {
 			gunScale += gunSp;
-
+			gunTransUp = 0;
+			gunTransFront = 0;
+			gunScaleSmall = 1;
 		}
 		glTranslatef(1, 0.35, 0);
 		glScalef(gunScale, gunScale, gunScale);
 
-		if (gunShootMove == true) {
-			gunShoot();
+		if (gunScale > 0.9) {
+			fingerRight = true;
+			elbowRight = true;
 		}
+
+		if (gunShootMove == true) 
+			gunShoot();
 	}
-	if (gunBig == false) {
+	if (gunBig == false && gunSmall == false) {
 		glTranslatef(0.3, 0.1, 0.08);
 		glScalef(0.2, 0.2, 0.2);
+	}
+	if (gunSmall == true) {
+		if (gunScaleSmall > 0) {
+			gunScaleSmall -= gunSp;
+		}
+		glTranslatef(1, 0.35, 0);
+		glScalef(gunScaleSmall, gunScaleSmall, gunScaleSmall);
+		elbowRight = false;
+		fingerRight = false;
 	}
 
 	//////////////////////////////////////////////////front part
@@ -2164,6 +2221,7 @@ void gunTrans() {
 	if (gunTransNear > 0.1) {
 		gunBig = true;
 		gunShow = false;
+		gunScale = 0;
 	}
 	gun();
 	glPopMatrix();
@@ -2172,10 +2230,10 @@ void gunTrans() {
 }
 
 //////////////////////////////////////hand
-void shoulder(float sizex, float sizey, float sizez) {
+void shoulder(LPCSTR textBody1) {
 	GLuint texture;
-	texture = loadTexture("black steel.bmp");
-
+	texture = loadTexture(textBody1);
+	
 	glBegin(GL_QUADS);
 	//Face size : Bottom
 	glTexCoord2f(0.0f, 0.0f);
@@ -2183,45 +2241,45 @@ void shoulder(float sizex, float sizey, float sizez) {
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0.2, -0.1, 0.05);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.1, 0.05);
+	glVertex3f(0.55, 0.1, 0.05);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.1, 0.5);
+	glVertex3f(0.55, 0.1, 0.5);
 
 	//Face 2 : Left
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(0.2, -0.1, 0.05);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, sizey, 0);
+	glVertex3f(0, 0.55, 0);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, sizey, sizez);
+	glVertex3f(0, 0.55, 0.55);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(0.2, -0.1, 0.5);
 
 	//Top
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, sizey, sizez);
+	glVertex3f(0, 0.55, 0.55);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(0, sizey, 0);
+	glVertex3f(0, 0.55, 0);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0, 0.75, 0);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0, 0.75, sizez);
+	glVertex3f(0, 0.75, 0.55);
 
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.7, sizez);
+	glVertex3f(0.55, 0.7, 0.55);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.7, 0);
+	glVertex3f(0.55, 0.7, 0);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0.4, 0.7, 0);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.4, 0.7, sizez);
+	glVertex3f(0.4, 0.7, 0.55);
 
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0.75, 0);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, 0.75, sizez);
+	glVertex3f(0, 0.75, 0.55);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0.4, 0.7, sizez);
+	glVertex3f(0.4, 0.7, 0.55);
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(0.4, 0.7, 0);
 
@@ -2229,45 +2287,45 @@ void shoulder(float sizex, float sizey, float sizez) {
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0.2, -0.1, 0.5);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.35, sizey, 0.75);
+	glVertex3f(0.35, 0.55, 0.75);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, sizey, 0.75);
+	glVertex3f(0.55, 0.55, 0.75);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.1, 0.5);
+	glVertex3f(0.55, 0.1, 0.5);
 
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0.35, sizey, -0.25);
+	glVertex3f(0.35, 0.55, -0.25);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0.2, -0.1, 0.05);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.1, 0.05);
+	glVertex3f(0.55, 0.1, 0.05);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, sizey, -0.25);
+	glVertex3f(0.55, 0.55, -0.25);
 
 	//////////////////////////////////////
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, sizey, sizez);
+	glVertex3f(0, 0.55, 0.55);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.35, sizey, 0.75);
+	glVertex3f(0.35, 0.55, 0.75);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0.4, 0.7, sizez);
+	glVertex3f(0.4, 0.7, 0.55);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(0, 0.75, sizez);
+	glVertex3f(0, 0.75, 0.55);
 
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0.35, sizey, 0.75);
+	glVertex3f(0.35, 0.55, 0.75);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.4, 0.7, sizez);
+	glVertex3f(0.4, 0.7, 0.55);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.7, sizez);
+	glVertex3f(0.55, 0.7, 0.55);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, sizey, 0.75);
+	glVertex3f(0.55, 0.55, 0.75);
 
 	///////////////////////////////////////
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, sizey, 0);
+	glVertex3f(0, 0.55, 0);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.35, sizey, -0.25);
+	glVertex3f(0.35, 0.55, -0.25);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(0.4, 0.7, 0);
 	glTexCoord2f(1.0f, 0.0f);
@@ -2276,11 +2334,11 @@ void shoulder(float sizex, float sizey, float sizez) {
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0.4, 0.7, 0);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.35, sizey, -0.25);
+	glVertex3f(0.35, 0.55, -0.25);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, sizey, -0.25);
+	glVertex3f(0.55, 0.55, -0.25);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.7, 0);
+	glVertex3f(0.55, 0.7, 0);
 	glEnd();
 
 	glBegin(GL_TRIANGLES);
@@ -2288,46 +2346,46 @@ void shoulder(float sizex, float sizey, float sizez) {
 	glTexCoord2f(0.5f, 1.0f);
 	glVertex3f(0.2, -0.1, 0.5);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, sizey, sizez);
+	glVertex3f(0, 0.55, 0.55);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(0.35, sizey, 0.75);
+	glVertex3f(0.35, 0.55, 0.75);
 
 	//Face 6 : Back
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(0.35, sizey, -0.25);
+	glVertex3f(0.35, 0.55, -0.25);
 	glTexCoord2f(0.5f, 1.0f);
 	glVertex3f(0.2, -0.1, 0.05);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, sizey, 0);
+	glVertex3f(0, 0.55, 0);
 	glEnd();
 
 	glBegin(GL_POLYGON);
 	//Face 4 : Right
 	glTexCoord2f(0.02f, 1.0f);
-	glVertex3f(sizex, 0.7, sizez);
+	glVertex3f(0.55, 0.7, 0.55);
 	glTexCoord2f(0.0f, 0.7f);
-	glVertex3f(sizex, 0.7, 0);
+	glVertex3f(0.55, 0.7, 0);
 	glTexCoord2f(0.2f, 0.0f);
-	glVertex3f(sizex, sizey, -0.25);
+	glVertex3f(0.55, 0.55, -0.25);
 	glTexCoord2f(0.8f, 0.0f);
-	glVertex3f(sizex, 0.1, 0.05);
+	glVertex3f(0.55, 0.1, 0.05);
 	glTexCoord2f(1.0f, 0.7f);
-	glVertex3f(sizex, 0.1, 0.5);
+	glVertex3f(0.55, 0.1, 0.5);
 	glTexCoord2f(0.8f, 1.0f);
-	glVertex3f(sizex, sizey, 0.75);
+	glVertex3f(0.55, 0.55, 0.75);
 	glEnd();
 	glDeleteTextures(1, &texture);
 	glDisable(GL_TEXTURE_2D);
 }
 
-void UpHand(float sizex, float sizey, float sizez) {
+void upHand(LPCSTR textBody1, LPCSTR textJoin1) {
 
 	glPushMatrix();
 	glTranslatef(0, 0.025, 0.025);
 
 	glPushMatrix();                         //sphere 1 connect
 	glTranslatef(0.1, 0.07, 0.07);
-	sphereTexture(0.07, "black steel.bmp");
+	sphereTexture(0.07, textJoin1);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2338,7 +2396,7 @@ void UpHand(float sizex, float sizey, float sizez) {
 	glRotatef(180, 0, 0, 1);
 
 	GLuint texture;
-	texture = loadTexture("black steel.bmp");
+	texture = loadTexture(textJoin1);
 
 	glBegin(GL_TRIANGLES);    //Pyramid connection
 	glTexCoord2f(0.0f, 0.0f);
@@ -2376,7 +2434,7 @@ void UpHand(float sizex, float sizey, float sizez) {
 
 	glPushMatrix();              //Big Quads Arm
 	glTranslatef(0.2, 0, 0);
-	drawCubeTexture(sizex, sizey, sizez, "black steel.bmp");
+	drawCubeTexture(0.5, 0.15, 0.15, textBody1);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 	glPopMatrix();
@@ -2449,10 +2507,10 @@ void robotArmDecor2() {
 	glEnd();
 }
 
-void robotArm(float sizex, float sizey, float sizez)
+void robotArm(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 {
 	GLuint texture;
-	texture = loadTexture("black steel.bmp");
+	texture = loadTexture(textJoin1);
 
 	glBegin(GL_TRIANGLES);    //Pyramid on Arm
 	glTexCoord2f(0.0f, 0.0f);
@@ -2487,16 +2545,16 @@ void robotArm(float sizex, float sizey, float sizez)
 	glDisable(GL_TEXTURE_2D);
 
 	glPushMatrix();         //Big Quads Arm
-	texture = loadTexture("black steel.bmp");
-
+	texture = loadTexture(textBody1);
+	
 	glBegin(GL_QUADS);
 	//Face size : Bottom
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, 0, sizez);
+	glVertex3f(0, 0, 0.2);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.03, 0.17);
+	glVertex3f(0.5, 0.03, 0.17);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.03, 0.03);
+	glVertex3f(0.5, 0.03, 0.03);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, 0);
 
@@ -2504,58 +2562,58 @@ void robotArm(float sizex, float sizey, float sizez)
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, 0);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, sizey, 0);
+	glVertex3f(0, 0.2, 0);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0, sizey, sizez);
+	glVertex3f(0, 0.2, 0.2);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(0, 0, sizez);
+	glVertex3f(0, 0, 0.2);
 
 	//Face 3 : Front
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, 0, sizez);
+	glVertex3f(0, 0, 0.2);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, sizey, sizez);
+	glVertex3f(0, 0.2, 0.2);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.17, 0.17);
+	glVertex3f(0.5, 0.17, 0.17);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.03, 0.17);
+	glVertex3f(0.5, 0.03, 0.17);
 
 	//Face 4 : Right
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.03, 0.17);
+	glVertex3f(0.5, 0.03, 0.17);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(sizex, 0.03, 0.03);
+	glVertex3f(0.5, 0.03, 0.03);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(sizex, 0.17, 0.03);
+	glVertex3f(0.5, 0.17, 0.03);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.17, 0.17);
+	glVertex3f(0.5, 0.17, 0.17);
 
 	//Face 5 : Top
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.17, 0.17);
+	glVertex3f(0.5, 0.17, 0.17);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, sizey, sizez);
+	glVertex3f(0, 0.2, 0.2);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, sizey, 0);
+	glVertex3f(0, 0.2, 0);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.17, 0.03);
+	glVertex3f(0.5, 0.17, 0.03);
 
 	//Face 6 : Back
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(sizex, 0.17, 0.03);
+	glVertex3f(0.5, 0.17, 0.03);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(sizex, 0.03, 0.03);
+	glVertex3f(0.5, 0.03, 0.03);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, 0);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, sizey, 0);
+	glVertex3f(0, 0.2, 0);
 	glEnd();
 	glDeleteTextures(1, &texture);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 
 	/////////////////////////////////////decoration
-	texture = loadTexture("white.bmp");
+	texture = loadTexture(textBody2);
 
 	glPushMatrix();              //first
 	glTranslatef(0, 0, -0.0001);
@@ -2582,39 +2640,39 @@ void robotArm(float sizex, float sizey, float sizez)
 	glDisable(GL_TEXTURE_2D);
 }
 
-void palm(float sizex, float sizey, float sizez) {
+void palm(LPCSTR textBody1) {
 	glPushMatrix();
 	glTranslatef(0.5, 0, 0.1);
-	drawCubeTexture(sizex, sizey, sizez, "black steel.bmp");
+	drawCubeTexture(0.15, 0.2, 0.05, textBody1);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 }
 
-void thumb(float sizex, float sizey, float sizez) {
+void thumb(LPCSTR textBody2) {
 	glPushMatrix();
-	glTranslatef(0.5, 0.2, 0.1);
-	drawCubeTexture(sizex, sizey, sizez, "white.bmp");
+	glTranslatef(0.5, 0.19, 0.1);
+	drawCubeTexture(0.05, 0.06, 0.05, textBody2);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 }
 
-void robotFinger(float sizex, float sizey, float sizez)
+void robotFinger(LPCSTR textBody2)
 {
 	glPushMatrix();                     //finger connector
 	glTranslatef(0.636, 0.025, 0.12);
-	sphereTexture(0.02, "white.bmp");                       //first
+	sphereTexture(0.02, textBody2);                       //first
 
 	glPushMatrix();
 	glTranslatef(0, 0.05, 0);
-	sphereTexture(0.02, "white.bmp");
+	sphereTexture(0.02, textBody2);
 
 	glPushMatrix();
 	glTranslatef(0, 0.05, 0);
-	sphereTexture(0.02, "white.bmp");
+	sphereTexture(0.02, textBody2);
 
 	glPushMatrix();
 	glTranslatef(0, 0.05, 0);
-	sphereTexture(0.02, "white.bmp");
+	sphereTexture(0.02, textBody2);
 
 	glPopMatrix();
 	glPopMatrix();
@@ -2625,19 +2683,19 @@ void robotFinger(float sizex, float sizey, float sizez)
 	glTranslatef(0.65, 0.05, 0.1);
 	glRotatef(-90, 0, 0, 1);
 	glScalef(0.1, 0.1, 0.1);
-	drawCubeTexture(sizex, sizey, sizez, "white.bmp");
+	drawCubeTexture(0.5, 0.7, 0.5, textBody2);
 
 	glPushMatrix();	                       //second
 	glTranslatef(-0.5, 0, 0);
-	drawCubeTexture(sizex, sizey, sizez, "white.bmp");
+	drawCubeTexture(0.5, 0.7, 0.5, textBody2);
 
 	glPushMatrix();	                       //third
 	glTranslatef(-0.5, 0, 0);
-	drawCubeTexture(sizex, sizey, sizez, "white.bmp");
+	drawCubeTexture(0.5, 0.7, 0.5, textBody2);
 
 	glPushMatrix();	                       //fourth
 	glTranslatef(-0.5, 0, 0);
-	drawCubeTexture(sizex, sizey, sizez, "white.bmp");
+	drawCubeTexture(0.5, 0.7, 0.5, textBody2);
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
@@ -2669,7 +2727,7 @@ void leftHand() {
 	glPushMatrix();
 	glTranslatef(-0.6, 0.1, -0.05);
 	glScalef(0.7, 0.7, 1);
-	sphereTexture(0.1, "Rusty black steel.bmp");
+	sphereTexture(0.1, jointText[changeJoint1]);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2678,46 +2736,47 @@ void leftHand() {
 	glRotatef(-90, 1, 0, 0);
 	glScalef(0.5, 0.5, 0.5);
 
-	shoulder(0.55, 0.55, 0.55);         //shoulder
+	shoulder(bodyText[changeBody1]);         //shoulder
 	glPopMatrix();
 
-	UpHand(0.5, 0.15, 0.15);      //UpHand
+	upHand(bodyText[changeBody1], jointText[changeJoint1]);      //UpHand
 
 	glPushMatrix();               //rotate elbow up
 	if (elbowLeft == true) {
 		if (actRotateElbowLeft > -90) {
 			actRotateElbowLeft -= rotatfinger;
 		}
-
 		glRotatef(actRotateElbowLeft, 0, 0, 1);
 	}
 	else if (elbowLeft == false) {
 		if (actRotateElbowLeft < 0) {
 			actRotateElbowLeft += rotatfinger;
 		}
-
 		glRotatef(actRotateElbowLeft, 0, 0, 1);
 	}
 
-	if (weaponShow == true)                              ///////Weapon
+	if (weaponShow == true)                           ///////Weapon
 		weaponTrans();
 
-	if (weaponBig == true) {
+	if (weaponBig == true|| weaponSmall == true) {
 		weapon();
-		fingerLeft = true;
+		if (weaponBig == true)
+			fingerLeft = true;
+		if (weaponSmall == true)
+			fingerLeft = false;
 	}
 
-	robotArm(0.5, 0.2, 0.2);                   //arm
+	robotArm(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);                   //arm
 
 	glPushMatrix();
 	glTranslatef(0, 0.02, 0);
 	glScalef(1, 0.8, 1);
-	palm(0.15, 0.2, 0.05);             //palm
+	palm(bodyText[changeBody1]);             //palm
 	glPopMatrix();
 
 	glPushMatrix();                        //left thumb connector
-	glTranslatef(0.525, 0.01, 0.125);
-	sphereTexture(0.02, "white.bmp");
+	glTranslatef(0.525, 0.01, 0.12);
+	sphereTexture(0.02, jointText[changeJoint1]);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2742,7 +2801,7 @@ void leftHand() {
 
 	glTranslatef(0, -0.25, 0);
 
-	thumb(0.05, 0.06, 0.05);            //thumb
+	thumb(bodyText[changeBody2]);                 //thumb
 	glPopMatrix();
 	/////////////////////////////////////////////////////////
 	glPushMatrix();                     //first finger
@@ -2767,7 +2826,7 @@ void leftHand() {
 		glRotatef(actRotatFingLeft, 0, 1, 0);
 		glTranslatef(-0.65, 0, -0.1);
 	}
-	robotFinger(0.5, 0.7, 0.5);
+	robotFinger(bodyText[changeBody2]);
 
 	/////////////////////////
 	glPushMatrix();
@@ -2791,8 +2850,8 @@ void leftHand() {
 		glRotatef(actRotatFing2Left, 0, 1, 0);
 		glTranslatef(-0.65, 0, -0.09);
 	}
-
-	robotFinger(0.5, 0.7, 0.5);
+	
+	robotFinger(bodyText[changeBody2]);
 	/////////////////////////////////////
 	glPushMatrix();
 	glTranslatef(0.05, 0, 0);
@@ -2816,7 +2875,7 @@ void leftHand() {
 		glTranslatef(-0.65, 0, -0.09);
 	}
 
-	robotFinger(0.5, 0.7, 0.5);
+	robotFinger(bodyText[changeBody2]);
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
@@ -2846,7 +2905,7 @@ void rightHand() {
 	glPushMatrix();                 //connect shoulder and body
 	glTranslatef(-0.6, 0.1, -0.05);
 	glScalef(0.7, 0.7, 1);
-	sphereTexture(0.1, "Rusty black steel.bmp");
+	sphereTexture(0.1, jointText[changeJoint1]);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2855,10 +2914,10 @@ void rightHand() {
 
 	glScalef(0.5, 0.5, 0.5);
 
-	shoulder(0.55, 0.55, 0.55);        //shoulder
+	shoulder(bodyText[changeBody1]);       //shoulder
 	glPopMatrix();
 
-	UpHand(0.5, 0.15, 0.15);
+	upHand(bodyText[changeBody1], jointText[changeJoint1]);
 
 	glPushMatrix();               //rotate elbow up
 	if (elbowRight == true) {
@@ -2870,7 +2929,7 @@ void rightHand() {
 		glRotatef(actRotateElbowRight, 0, 0, 1);
 		glTranslatef(0, -0.2, 0);
 	}
-	else if (elbowRight == false) {// && rightHandMove == true) {
+	else if (elbowRight == false) { 
 		if (actRotateElbowRight > 0) {
 			actRotateElbowRight -= rotatfinger;
 		}
@@ -2880,25 +2939,30 @@ void rightHand() {
 		glTranslatef(0, -0.2, 0);
 	}
 
-	if (gunShow == true)                                      //Gun Show
-		gunTrans();
+	if (gunShow == true) {                               //Gun Show
+		if (fingerRight == true)
+			fingerRight = false;
 
-	if (gunBig == true) {
-		gun();
-		fingerRight = true;
+		gunTrans();
 	}
 
-	robotArm(0.5, 0.2, 0.2);    //arm
+	if (gunBig == true || gunSmall == true) {
+		gun();
+		if (gunSmall == true)
+			fingerRight = false;
+	}
+		
+	robotArm(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);    //arm
 
 	glPushMatrix();
 	glTranslatef(0, 0.02, 0);
 	glScalef(1, 0.8, 1);
-	palm(0.15, 0.2, 0.05);       //palm
+	palm(bodyText[changeBody1]);      //palm
 	glPopMatrix();
 
-	glPushMatrix();                        //left thumb connector
-	glTranslatef(0.525, 0.19, 0.125);
-	sphereTexture(0.02, "white.bmp");
+	glPushMatrix();                        // thumb connector
+	glTranslatef(0.525, 0.19, 0.12);
+	sphereTexture(0.02, bodyText[changeBody2]);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2920,9 +2984,9 @@ void rightHand() {
 		glRotatef(actRotatThumbRight, 1, 0, 0);
 		glTranslatef(0, -0.18, -0.1);
 	}
-	glTranslatef(0, -0.03, 0);
+	glTranslatef(0, -0.01, 0);
 
-	thumb(0.05, 0.06, 0.05);            //thumb
+	thumb(bodyText[changeBody2]);            //thumb
 	glPopMatrix();
 	///////////////////////////////////////
 	glPushMatrix();                     //first finger
@@ -2948,7 +3012,7 @@ void rightHand() {
 		glTranslatef(-0.65, 0, -0.1);
 	}
 
-	robotFinger(0.5, 0.7, 0.5);
+	robotFinger(bodyText[changeBody2]);
 
 	/////////////////////////
 	glPushMatrix();
@@ -2973,7 +3037,7 @@ void rightHand() {
 		glTranslatef(-0.65, 0, -0.09);
 	}
 
-	robotFinger(0.5, 0.7, 0.5);
+	robotFinger(bodyText[changeBody2]);
 	/////////////////////////////////////
 	glPushMatrix();
 	glTranslatef(0.05, 0, 0);
@@ -2997,7 +3061,7 @@ void rightHand() {
 		glTranslatef(-0.65, 0, -0.09);
 	}
 
-	robotFinger(0.5, 0.7, 0.5);
+	robotFinger(bodyText[changeBody2]);
 
 	glPopMatrix();
 	glPopMatrix();
@@ -3029,7 +3093,7 @@ void hand() {
 	glPopMatrix();
 }
 
-//////////////////////////////////////Leg
+///////////////////////////////////////////////Leg
 void sharpCorner(LPCSTR textBody2) {
 	GLuint texture;
 	texture = loadTexture(textBody2);
@@ -3067,13 +3131,13 @@ void sharpCorner(LPCSTR textBody2) {
 	glDisable(GL_TEXTURE_2D);
 }
 
-void upLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3) {
+void upLeg(LPCSTR textBody1, LPCSTR textBody2) {
 	glPushMatrix();
 	glScalef(0.5, 0.6, 0.3);
 	drawCubeTexture(0.5, 1, 0.5, textBody1);
 
 	GLuint texture;
-	texture = loadTexture(textBody2);
+	texture = loadTexture("metal porcealin.bmp");
 
 	glPushMatrix();
 	glTranslatef(0.075, 0.4, 0.5);
@@ -3193,30 +3257,30 @@ void upLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3) {
 	glDeleteTextures(1, &texture);
 	glDisable(GL_TEXTURE_2D);
 
-	sharpCorner(textBody3);                         //right sharp corner
+	sharpCorner(textBody1);                         //right sharp corner
 
 	glPushMatrix();
 	glTranslatef(0, 0.3, 0);
-	sharpCorner(textBody3);
+	sharpCorner(textBody1);
 
 	glPushMatrix();
 	glTranslatef(0, 0.3, 0);
-	sharpCorner(textBody3);
+	sharpCorner(textBody1);
 
 	glPopMatrix();
 	glPopMatrix();
 
 	glPushMatrix();           //left sharp corner
 	glTranslatef(0.34, 0, 0);
-	sharpCorner(textBody3);
+	sharpCorner(textBody1);
 
 	glPushMatrix();
 	glTranslatef(0, 0.3, 0);
-	sharpCorner(textBody3);
+	sharpCorner(textBody1);
 
 	glPushMatrix();
 	glTranslatef(0, 0.3, 0);
-	sharpCorner(textBody3);
+	sharpCorner(textBody1);
 
 	glPopMatrix();
 	glPopMatrix();
@@ -3225,32 +3289,14 @@ void upLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3) {
 
 
 	glPushMatrix();                  //up leg back Thruster
-	glTranslatef(0.13, 0.36, 0.16);
+	glTranslatef(0.13, 0.3, 0.2);
 	glRotatef(35, 1, 0, 0);
 
-	//glColor3f(1, 0, 0);
-	cylinder(0.01, 0.07, 0.1);
-
-	//glColor3f(1, 1, 0);
-	cylinder(0.01, 0.069, 0.1);
-
-	/*glPushMatrix();
-	glTranslatef(0, 0, 0.02);
-	sphereTexture(0.069, "white.bmp");
-	glPopMatrix();
-	//turbo();
-	GLUquadric* cylinder = NULL;
-	cylinder = gluNewQuadric();
-
-	glColor3f(0, 0, 0);
-	gluQuadricDrawStyle(cylinder, GLU_LINE);
-	gluCylinder(cylinder, 0.01, 0.068, 0.1, 10, 5);
-
-	gluDeleteQuadric(cylinder);*/
+	turbo(jointText[changeBody1]);
 	glPopMatrix();
 }
 
-void leftUpLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
+void leftUpLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 {
 	glPushMatrix();
 	glTranslatef(0.4, 0.73, 0.08);
@@ -3260,11 +3306,11 @@ void leftUpLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR text
 
 	glPushMatrix();
 	glTranslatef(0.27, 0.1, 0);
-	upLeg(textBody1, textBody2, textBody3);
+	upLeg(textBody1, textBody2);
 	glPopMatrix();
 }
 
-void rightUpLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
+void rightUpLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 {
 	glPushMatrix();
 	glTranslatef(-0.4, 0.73, 0.08);
@@ -3274,15 +3320,15 @@ void rightUpLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR tex
 
 	glPushMatrix();
 	glTranslatef(-0.53, 0.1, 0);
-	upLeg(textBody1, textBody2, textBody3);
+	upLeg(textBody1, textBody2);
 	glPopMatrix();
 }
 
-void downLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1) {
+void downLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1) {
 	glPushMatrix();
 	glTranslatef(0, 0.3, -0.13);
 	glRotatef(60, 1, 0, 0);
-	cylinderTexture(0.001, 0.05, 0.2, textBody3);
+	cylinderTexture(0.001, 0.05, 0.2, "metal porcealin.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
@@ -3291,7 +3337,7 @@ void downLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJo
 	glPushMatrix();            //knee
 	glTranslatef(0, 0.55, 0.45);
 	glScalef(1, 0.2, 1);
-	sphereTexture(1.2, textBody3);
+	sphereTexture(1.2, "metal porcealin.bmp");
 	glPopMatrix();
 
 	GLuint texture;
@@ -3451,23 +3497,23 @@ void downLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJo
 	glPopMatrix();
 }
 
-void leftDownLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
+void leftDownLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 {
 	glPushMatrix();
 	glTranslatef(0.4, -0.05, 0);    //right leg translate to right
-	downLeg(textBody1, textBody2, textBody3, textJoin1);
+	downLeg(textBody1, textBody2, textJoin1);
 	glPopMatrix();
 }
 
-void rightDownLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
+void rightDownLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 {
 	glPushMatrix();
 	glTranslatef(-0.4, -0.05, 0);    //right leg translate to right
-	downLeg(textBody1, textBody2, textBody3, textJoin1);
+	downLeg(textBody1, textBody2, textJoin1);
 	glPopMatrix();
 }
 
-void leg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1) {
+void leg() {
 	if (walkUpLeftKnee > 20 && walkLeftKnee > 0.18) {          //walking
 		walkLeft = false;
 		walkRight = true;
@@ -3502,7 +3548,7 @@ void leg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
 		glRotatef(walkUpLeftKnee, 1, 0, 0);
 		glTranslatef(0, -0.6, 0);
 	}
-	leftUpLeg(textBody1, textBody2, textBody3, textJoin1);
+	leftUpLeg(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -3519,7 +3565,7 @@ void leg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
 		glTranslatef(0, walkLeftKnee / 8, -walkLeftKnee);
 	}
 
-	leftDownLeg(textBody1, textBody2, textBody3, textJoin1);
+	leftDownLeg(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);
 	glPopMatrix();
 	glPopMatrix();
 	////////////////////////////////////////////////////////////Right Leg
@@ -3544,7 +3590,7 @@ void leg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
 		glTranslatef(0, -0.6, 0);
 	}
 
-	rightUpLeg(textBody1, textBody2, textBody3, textJoin1);
+	rightUpLeg(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -3560,7 +3606,7 @@ void leg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textBody3, LPCSTR textJoin1)
 	}
 	glTranslatef(0, walkRightKnee / 8, -walkRightKnee);
 
-	rightDownLeg(textBody1, textBody2, textBody3, textJoin1);
+	rightDownLeg(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
@@ -3591,11 +3637,6 @@ void lighting() {
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glEnable(GL_LIGHT0);
 
-	//Light 1 - green color diffuse light
-	/*glLightfv(GL_LIGHT1, GL_DIFFUSE, diff);
-	glLightfv(GL_LIGHT1, GL_POSITION, posR);
-	glEnable(GL_LIGHT1);*/
-
 	glPushMatrix();
 	glDisable(GL_LIGHTING);
 	glTranslatef(lightPosition[0], lightPosition[1], lightPosition[2]);
@@ -3623,7 +3664,6 @@ void display()
 		glTranslatef(0, 0, tz);
 
 		projection();
-		lighting();
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -3639,7 +3679,7 @@ void display()
 		glRotatef(sliding, 1, 0, 0);
 		headAndBody(bodyText[changeBody1], jointText[changeBody1]);
 		hand();
-		//leg();
+		leg();
 		glPopMatrix();
 		if (sliding == 30) {
 			isTurbo = false;
@@ -3664,9 +3704,9 @@ void display()
 		glLoadIdentity();
 		glPushMatrix();
 
-		leg(bodyText[changeBody1], bodyText[changeBody2], bodyText[changeBody3], jointText[changeJoint1]);
+		//hand();
+		leg();
 		
-		glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
 		break;
 	}

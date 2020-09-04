@@ -66,7 +66,7 @@ float orthoview = 1;                 //yong
 BITMAP BMP;             //bitmap structure
 HBITMAP hBMP = NULL;    //bitmap handle
 LPCSTR bodyText[6] = { "black steel.bmp", "white.bmp" , "metal porcealin.bmp"};
-LPCSTR jointText[3] = { "Rusty Black Steel.bmp" , "white.bmp" };
+LPCSTR jointText[3] = { "white.bmp","Rusty Black Steel.bmp" };
 int changeBody1 = 0, changeBody2 = 1, changeBody3 = 2;
 int changeJoint1 = 0;
 
@@ -512,13 +512,18 @@ void drawsphere() {
 	gluDeleteQuadric(sphere);
 }
 
-void drawCone(float topRadius, float height, int slices, int stacks) {
+void drawCone(float topRadius, float height, int slices, int stacks, LPCSTR filename) {
+	GLuint texture;
+	texture = loadTexture(filename);
 	GLUquadricObj* cylinder = NULL;
 	cylinder = gluNewQuadric();
+	gluQuadricTexture(cylinder, TRUE);
+	gluQuadricNormals(cylinder, GLU_SMOOTH);
 
 	gluQuadricDrawStyle(cylinder, GLU_POINT);
 	gluCylinder(cylinder, 0.01, topRadius, height, slices, stacks);
 	gluDeleteQuadric(cylinder);
+	glDeleteTextures(1, &texture);
 };
 
 void drawCircle(float radius) {
@@ -556,22 +561,35 @@ void drawCylinder(float baseRadius, float topRadius, float height, int slices, i
 	glDeleteTextures(1, &texture);
 };
 
-void drawCylinder2(float baseRadius, float topRadius, float height, int slices, int stacks) {//use for glu point
+void drawCylinder2(float baseRadius, float topRadius, float height, int slices, int stacks, LPCSTR filename) {//use for glu point
+	
+	GLuint texture;
+	texture = loadTexture(filename);	
 	GLUquadricObj* cylinder = NULL;
 	cylinder = gluNewQuadric();
+
+	gluQuadricTexture(cylinder, TRUE);
+	gluQuadricNormals(cylinder, GLU_SMOOTH);
+
 
 	gluQuadricDrawStyle(cylinder, GLU_POINT);
 	gluCylinder(cylinder, baseRadius, topRadius, height, slices, stacks);
 	gluDeleteQuadric(cylinder);
+	glDeleteTextures(1, &texture);
 };
 
-void drawCylinderLine(float baseRadius, float topRadius, float height, int slices, int stacks) {
+void drawCylinderLine(float baseRadius, float topRadius, float height, int slices, int stacks, LPCSTR filename) {
+	GLuint texture;
+	texture = loadTexture(filename);
 	GLUquadricObj* cylinder = NULL;
 	cylinder = gluNewQuadric();
+	gluQuadricTexture(cylinder, TRUE);
+	gluQuadricNormals(cylinder, GLU_SMOOTH);
 
 	gluQuadricDrawStyle(cylinder, GLU_LINE);
 	gluCylinder(cylinder, baseRadius, topRadius, height, slices, stacks);
 	gluDeleteQuadric(cylinder);
+	glDeleteTextures(1, &texture);
 };
 
 void turbo(LPCSTR filename) {
@@ -580,14 +598,14 @@ void turbo(LPCSTR filename) {
 	cylinderTexture(0.031, 0.051, 0.02, filename);
 	cylinderTexture(0.03, 0.05, 0.02, filename);
 	//glColor3f(0, 0, 0);
-	drawCylinderLine(0.029, 0.049, 0.02, 10, 1);
+	drawCylinderLine(0.029, 0.049, 0.02, 10, 1, "weaponHandle.bmp");
 	if (isTurbo) {
 		//glColor3f(0, 0, 1);
-		drawCone(0.05, 0.05, 50, 50);
+		drawCone(0.05, 0.05, 50, 50, "fire.bmp");
 		glPushMatrix();
 		glTranslatef(0, 0, 0.05);
 		//	glRotatef(180, 1, 0, 0);
-		drawCylinder2(0.048, 0.02, 0.03, 30, 30);  
+		drawCylinder2(0.048, 0.02, 0.03, 30, 30,"fire.bmp");  
 		glPopMatrix();
 	}
 }
@@ -660,7 +678,7 @@ void bodyUp(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-	glColor3f(1, 0, 0);
+//	glColor3f(1, 0, 0);
 	//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.05, 0.3f, -0.05);
@@ -671,7 +689,7 @@ void bodyUp(float width, LPCSTR filename) {
 	glTexCoord2f(0, 0);
 	glVertex3f(0.0f, 0.0f, -0.1);
 	//Face 2£º right
-	glColor3f(1, 0, 1);
+//	glColor3f(1, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.0f, 0.0f, -0.1);
 	glTexCoord2f(1, 1);
@@ -682,7 +700,7 @@ void bodyUp(float width, LPCSTR filename) {
 	glVertex3f(-0.05, 0.3f, -0.05);
 
 	//Face 3£º top
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.05, 0.3f, -0.05);
 	glTexCoord2f(1, 1);
@@ -692,7 +710,7 @@ void bodyUp(float width, LPCSTR filename) {
 	glTexCoord2f(0, 0);
 	glVertex3f(-0.45f, 0.35f, 0);
 	//Face 4£º left
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.45f, 0.35f, 0);
 	glTexCoord2f(1, 1);
@@ -703,7 +721,7 @@ void bodyUp(float width, LPCSTR filename) {
 	glVertex3f(-0.45f, 0.35f, width);
 
 	//Face 5£º behind
-	glColor3f(0, 1, 0);
+//	glColor3f(0, 1, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.45f, 0.35f, width);
 	glTexCoord2f(1, 1);
@@ -714,7 +732,7 @@ void bodyUp(float width, LPCSTR filename) {
 	glVertex3f(-0.45, 0.2f, width);
 
 	//Face 6£º bottom
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.45, 0.2f, width);
 	glTexCoord2f(1, 1);
@@ -734,7 +752,7 @@ void bodyUpMid(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_TRIANGLES);
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	//Face 1£º front
 	glTexCoord2f(1, 1);
 	glVertex3f(-0.02, 0.1f, -0.075);
@@ -746,7 +764,7 @@ void bodyUpMid(float width, LPCSTR filename) {
 
 	//Face 5£º behind
 	glBegin(GL_TRIANGLES);
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	glVertex3f(-0.02, 0.1f, width + 0.075);
 	glTexCoord2f(1, 0);
 	glVertex3f(0, 0.075f, width + 0.075);
@@ -755,7 +773,7 @@ void bodyUpMid(float width, LPCSTR filename) {
 	glEnd();
 
 	glBegin(GL_QUADS);
-	glColor3f(1, 1, 1);
+//	glColor3f(1, 1, 1);
 	//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.02, 0.1f, -0.075);
@@ -779,7 +797,7 @@ void bodyUpMid(float width, LPCSTR filename) {
 	glEnd();
 
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	//Face 1£º front
 
 	glTexCoord2f(0, 1);
@@ -810,7 +828,7 @@ void tri(LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_TRIANGLES);
-	glColor3f(1, 0, 0);
+//	glColor3f(1, 0, 0);
 	//front
 	glTexCoord2f(1, 1);
 	glVertex3f(0.0, 0, -0.1);
@@ -819,7 +837,7 @@ void tri(LPCSTR filename) {
 	glTexCoord2f(0, 0);
 	glVertex3f(0.15, 0.065, -0.05);
 	//back
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	glTexCoord2f(1, 1);
 	glVertex3f(0.15, 0, 0.05);
 	glTexCoord2f(1, 0);
@@ -829,7 +847,7 @@ void tri(LPCSTR filename) {
 	glEnd();
 	//right
 	glBegin(GL_QUADS);
-	glColor3f(1, 0, 1);
+//	glColor3f(1, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.15, 0.065, -0.05);
 	glTexCoord2f(1, 1);
@@ -839,7 +857,7 @@ void tri(LPCSTR filename) {
 	glTexCoord2f(0, 0);
 	glVertex3f(0.15, 0, -0.05);
 	//bottom
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, 0, 0.1);
 	glTexCoord2f(1, 1);
@@ -849,7 +867,7 @@ void tri(LPCSTR filename) {
 	glTexCoord2f(0, 0);
 	glVertex3f(0.15, 0, 0.05);
 	//top
-	glColor3f(0, 1, 0);
+//	glColor3f(0, 1, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, 0, 0.1);
 	glTexCoord2f(1, 1);
@@ -949,7 +967,7 @@ void bodyMid(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	glPushMatrix();
 	glRotatef(90, 1, 0, 0);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	drawCylinder(0.2, 0.2, 0.6, 30, 30, filename1);
 	glPopMatrix();
 	for (j = 0.1; j < 0.7; j += 0.1) {
@@ -957,7 +975,7 @@ void bodyMid(float width, LPCSTR filename1, LPCSTR filename2) {
 			glPushMatrix();
 			glRotatef(-i, 0, 1, 0);
 			glTranslatef(0.2, -j, 0);
-			glColor3f(1, 0, 0);
+//			glColor3f(1, 0, 0);
 			drawCubeTexture(0.07, 0.07, 0.07, filename2);
 			glPopMatrix();
 		}
@@ -987,7 +1005,7 @@ void bodySide(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(0.15, 0.07f, -0.05);
@@ -999,7 +1017,7 @@ void bodySide(float width, LPCSTR filename) {
 	glVertex3f(0.45, 0.2, 0.025);
 
 	//Face 2£º right
-	glColor3f(1, 0, 1);
+//	glColor3f(1, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.45, 0.2, 0.025);
 	glTexCoord2f(1, 1);
@@ -1010,7 +1028,7 @@ void bodySide(float width, LPCSTR filename) {
 	glVertex3f(0.45, 0.2, width - 0.025);
 
 	//Face 3£º top
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.45, 0.2, width - 0.025);
 	glTexCoord2f(1, 1);
@@ -1020,7 +1038,7 @@ void bodySide(float width, LPCSTR filename) {
 	glTexCoord2f(0, 0);
 	glVertex3f(0.15, 0.07f, width + 0.05);
 	//Face 4£º left
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.15, 0.07f, width + 0.05);
 	glTexCoord2f(1, 1);
@@ -1031,7 +1049,7 @@ void bodySide(float width, LPCSTR filename) {
 	glVertex3f(0.15, -0.07, width);
 
 	//Face 5£º behind
-	glColor3f(0, 1, 0);
+//	glColor3f(0, 1, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.15, -0.07, width);
 	glTexCoord2f(1, 1);
@@ -1042,7 +1060,7 @@ void bodySide(float width, LPCSTR filename) {
 	glVertex3f(0.45, 0.05, width - 0.03);
 
 	//Face 6£º bottom
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0.45, 0.05, width - 0.03);
 	glTexCoord2f(1, 1);
@@ -1091,7 +1109,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	textures[0] = loadTexture(filename1);
 
 	glBegin(GL_QUADS);
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.27, -0.1);
@@ -1103,7 +1121,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glVertex3f(0, -0.6, -0.1);
 
 	//Face 2£º right
-	glColor3f(1, 0, 1);
+//	glColor3f(1, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.6, -0.1);
 	glTexCoord2f(1, 1);
@@ -1114,7 +1132,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glVertex3f(0, -0.27, -0.1);
 
 	//Face 3£º top
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.3, -0.4, 0);
 	glTexCoord2f(1, 1);
@@ -1124,7 +1142,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glTexCoord2f(0, 0);
 	glVertex3f(-0.3, -0.4, width);
 	//Face 4£º left
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.3, -0.4, width);
 	glTexCoord2f(1, 1);
@@ -1136,7 +1154,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 
 
 	//Face 5£º behind
-	glColor3f(0, 1, 0);
+//	glColor3f(0, 1, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.3, -0.5f, width);
 	glTexCoord2f(1, 1);
@@ -1147,7 +1165,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glVertex3f(0, -0.6, width + 0.1);
 
 	//Face 6£º bottom
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.6, width + 0.1);
 	glTexCoord2f(1, 1);
@@ -1162,7 +1180,7 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glDisable(GL_TEXTURE_2D);
 
 	glPushMatrix();
-	glColor3f(1, 0, 1);
+//	glColor3f(1, 0, 1);
 	glTranslatef(-0.2, -0.3, -0.1);
 	drawCylinder(0.07, 0.07, 0.4, 30, 30, filename2);
 	glPopMatrix();
@@ -1174,7 +1192,7 @@ void neck(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, 0.29, (width / 2) - 0.15);
 	glTexCoord2f(1, 1);
@@ -1209,36 +1227,36 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	glPushMatrix();
 	glTranslatef(-0.245, 0.2, -0.045);
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	drawCircle(0.035);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTranslatef(0, 0, -0.001);
 	drawCircle(0.03);
 	glPopMatrix();
 	//////////////////////////////////////////thruster
 	glPushMatrix();
 	glTranslatef(-0.25, 0.2, -0.06);
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	cylinder(0.05, 0.02, 0.05);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.049, 0.019, 0.049, 7, 2);
+//	glColor3f(0, 0, 0);
+	drawCylinderLine(0.049, 0.019, 0.049, 7, 2,"weaponHandle.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.245, 0.2, -0.06);
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	drawCircle(0.035);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTranslatef(0, 0, -0.001);
 	drawCircle(0.03);
 	glPopMatrix();
 	////////////////////////////////////////
 	glPushMatrix();
 	glTranslatef(0.25, 0.2, -0.075);
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	cylinder(0.05, 0.02, 0.05);
-	glColor3f(0, 0, 0);
-	drawCylinderLine(0.049, 0.019, 0.049, 7, 2);
+//	glColor3f(0, 0, 0);
+	drawCylinderLine(0.049, 0.019, 0.049, 7, 2, "weaponHandle.bmp");
 	glPopMatrix();
 
 	glPushMatrix();
@@ -1270,18 +1288,18 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	glPushMatrix();
 	glRotatef(90, 0, 1, 0);
-	glTranslatef(-0.2, -0.56, 0.3);
+	glTranslatef(-0.2, -0.61, 0.3);
 	drawCubeTexture(0.2, 0.15, 0.05, filename2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.34, -0.56, 0.2);
+	glTranslatef(-0.34, -0.61, 0.2);
 	glRotatef(90, 0, 1, 0);
 	drawCubeTexture(0.2, 0.15, 0.05, filename2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.05, -0.53, 0.3);
+	glTranslatef(-0.05, -0.58, 0.3);
 	glRotatef(90, 0, 1, 0);
 	drawCubeTexture(0.4, 0.1, 0.1, filename2);
 	glPopMatrix();
@@ -1310,7 +1328,7 @@ void face(float width, LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	//Face 1£º front
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.27, 0);
@@ -1322,7 +1340,7 @@ void face(float width, LPCSTR filename) {
 	glVertex3f(0, -0.55, 0);
 
 	//Face 2£º right
-	glColor3f(1, 0, 1);
+//	glColor3f(1, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.55, 0);
 	glTexCoord2f(1, 1);
@@ -1334,7 +1352,7 @@ void face(float width, LPCSTR filename) {
 
 
 	//Face 3£º top
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.1, -0.35, 0);
 	glTexCoord2f(1, 1);
@@ -1344,7 +1362,7 @@ void face(float width, LPCSTR filename) {
 	glTexCoord2f(0, 0);
 	glVertex3f(-0.1, -0.35, width);
 	//Face 4£º left
-	glColor3f(0, 0, 1);
+//	glColor3f(0, 0, 1);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.1, -0.35, width);
 	glTexCoord2f(1, 1);
@@ -1356,7 +1374,7 @@ void face(float width, LPCSTR filename) {
 
 
 	//Face 5£º behind
-	glColor3f(0, 1, 0);
+//	glColor3f(0, 1, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.05, -0.5f, width);
 	glTexCoord2f(1, 1);
@@ -1367,7 +1385,7 @@ void face(float width, LPCSTR filename) {
 	glVertex3f(0, -0.55, width);
 
 	//Face 6£º bottom
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.55, width);
 	glTexCoord2f(1, 1);
@@ -1388,7 +1406,7 @@ void mouth(LPCSTR filename) {
 	texture = loadTexture(filename);
 
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.015, -0.45, -0.025);
 	glTexCoord2f(1, 1);
@@ -1402,7 +1420,7 @@ void mouth(LPCSTR filename) {
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(-0.015, -0.45, 0.025);
 	glTexCoord2f(1, 1);
@@ -1416,7 +1434,7 @@ void mouth(LPCSTR filename) {
 
 	//LEFT
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.5, -0.02);
 	glTexCoord2f(1, 1);
@@ -1428,7 +1446,7 @@ void mouth(LPCSTR filename) {
 	glEnd();
 
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.505, -0.01);
 	glTexCoord2f(1, 1);
@@ -1443,7 +1461,7 @@ void mouth(LPCSTR filename) {
 	glPushMatrix();
 	glRotatef(180, 0, 1, 0);
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.5, 0.02);
 	glTexCoord2f(1, 1);
@@ -1457,7 +1475,7 @@ void mouth(LPCSTR filename) {
 
 	glBegin(GL_QUADS);
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	glTexCoord2f(0, 1);
 	glVertex3f(0, -0.505, 0.01);
 	glTexCoord2f(1, 1);
@@ -1477,6 +1495,63 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	GLuint textures[2];
 	textures[0] = loadTexture(filename1);
 
+	//MASK
+	glPushMatrix();
+	glTranslatef(0, 0, -0.02);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 0, 0);
+	glTexCoord2f(0, 1);
+	glVertex3f(-0.06, -0.525, 0.025);
+	glTexCoord2f(1, 1);
+	glVertex3f(-0.095, -0.4, 0.02);
+	glTexCoord2f(1, 0);
+	glVertex3f(0.03, -0.45, -0.1);
+	glTexCoord2f(0, 0);
+	glVertex3f(0.03, -0.6, -0.05);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, 0, -0.02);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 0, 1);
+	glTexCoord2f(0, 1);
+	glVertex3f(0.12, -0.525, 0.025);
+	glTexCoord2f(1, 1);
+	glVertex3f(0.16, -0.4, 0.025);
+	glTexCoord2f(1, 0);
+	glVertex3f(0.03, -0.45, -0.1);
+	glTexCoord2f(0, 0);
+	glVertex3f(0.03, -0.6, -0.05);
+	glEnd();
+	glPopMatrix();
+
+	glBegin(GL_TRIANGLES);
+	//	glColor3f(1, 0, 0);
+		//Face 1£º top
+	glTexCoord2f(0, 0.5);
+	glVertex3f(-0.1, -0.349, 0);
+	glTexCoord2f(1, 1);
+	glVertex3f(0.03, -0.23, 0);
+	glTexCoord2f(1, 0);
+	glVertex3f(0.03, -0.4, -0.172);
+
+
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	//	glColor3f(1, 0, 0);
+		//Face 1£º top
+	glTexCoord2f(1, 1);
+	glVertex3f(0.03, -0.23, 0);
+	glTexCoord2f(1, 0);
+	glVertex3f(0.03, -0.4, -0.172);
+	glTexCoord2f(0, 0.5);
+	glVertex3f(0.16, -0.349, 0);
+
+	glEnd();
+
+	//head
 	glPushMatrix();
 	glTranslatef(0, 0.1, 0);
 	glScalef(1.2, 1.2, 1);
@@ -1493,9 +1568,6 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	face(width, filename1);
 	glPopMatrix();
 
-	glDeleteTextures(1, &textures[0]);
-	glDisable(GL_TEXTURE_2D);
-	textures[1] = loadTexture(filename2);
 
 	//glBegin(GL_QUADS);
 	//glColor3f(1, 0, 0);
@@ -1512,36 +1584,14 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	//glEnd();
 
-	glBegin(GL_TRIANGLES);
-	glColor3f(1, 0, 0);
-	//Face 1£º top
-	glTexCoord2f(0, 0.5);
-	glVertex3f(-0.1, -0.349, 0);
-	glTexCoord2f(1, 1);
-	glVertex3f(0.03, -0.23, 0);
-	glTexCoord2f(1, 0);
-	glVertex3f(0.03, -0.4, -0.172);
 
-
-	glEnd();
-
-	glBegin(GL_TRIANGLES);
-	glColor3f(1, 0, 0);
-	//Face 1£º top
-	glTexCoord2f(1, 1);
-	glVertex3f(0.03, -0.23, 0);
-	glTexCoord2f(1, 0);
-	glVertex3f(0.03, -0.4, -0.172);
-	glTexCoord2f(0, 0.5);
-	glVertex3f(0.16, -0.349, 0);
-
-	glEnd();
-
-
+	glDeleteTextures(1, &textures[0]);
+	glDisable(GL_TEXTURE_2D);
+	textures[1] = loadTexture(filename2);
 
 	//eye
 	glPushMatrix();
-	glColor3f(1, 1, 0);
+//	glColor3f(1, 1, 0);
 	glTranslatef(0.03, -0.07, 0.02);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 1);
@@ -1574,7 +1624,7 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPushMatrix();
 	glRotatef(-20, 0, 0, 1);
 	glTranslatef(0.26, -0.35, 0);
-	glColor3f(0, 0, 0);
+//	glColor3f(0, 0, 0);
 	drawCube(0.02, 0.15, 0.05);
 	glPopMatrix();
 
@@ -1598,36 +1648,6 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	//glPopMatrix();
 	glPopMatrix();
 	
-	//MASK
-	glPushMatrix();
-	glTranslatef(0, 0, -0.02);
-	glBegin(GL_QUADS);
-	glColor3f(1, 0, 0);
-	glTexCoord2f(0, 1);
-	glVertex3f(-0.06, -0.525, 0.025);
-	glTexCoord2f(1, 1);
-	glVertex3f(-0.095, -0.4, 0.02);
-	glTexCoord2f(1, 0);
-	glVertex3f(0.03, -0.45, -0.1);
-	glTexCoord2f(0, 0);
-	glVertex3f(0.03, -0.6, -0.05);
-	glEnd();
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(0, 0, -0.02);
-	glBegin(GL_QUADS);
-	glColor3f(1, 0, 1);
-	glTexCoord2f(0, 1);
-	glVertex3f(0.12, -0.525, 0.025);
-	glTexCoord2f(1, 1);
-	glVertex3f(0.16, -0.4, 0.025);
-	glTexCoord2f(1, 0);
-	glVertex3f(0.03, -0.45, -0.1);
-	glTexCoord2f(0, 0);
-	glVertex3f(0.03, -0.6, -0.05);
-	glEnd();
-	glPopMatrix();
 
 	glDeleteTextures(1, &textures[1]);
 	glDisable(GL_TEXTURE_2D);
@@ -3566,7 +3586,7 @@ void display()
 		glTranslatef(flyingX, flyingY, 0);
 		glTranslatef(0, 0, slideMove);
 		glRotatef(sliding, 1, 0, 0);
-		headAndBody("black steel.bmp", "white.bmp");
+		headAndBody(bodyText[changeBody1], jointText[changeBody1]);
 		hand();
 		//leg();
 		glPopMatrix();

@@ -1,0 +1,50 @@
+1 = hand
+2 = leg
+
+space = all action reset
+
+/////weapon
+0 = gun
+9 = weapon
+
+p = gun shoot
+o = weapon attack
+
+/////leg
+m = walking
+
+/////hand
+r = right finger wrap / release
+t = right elbow up / down
+y = right shoulder up / down 
+
+f = left finger wrap / release
+g = left elbow up / down
+h = left shoulder up / down 
+
+
+q = change view (Ortho to Perspective or vice versa)
+
+a = rotate view left
+d = rotate view right
+w = rotate view up
+s = rotate view down
+
+up = translate up
+down = translate down
+left = translate left
+right = translate right
+//z = translate near
+//x = translate far
+
+j= move light source left
+l= move light source right
+i= move light source up
+k= move light source down
+y= move light source back
+u= move light source front
+
+c= rotate head left
+b= rotate head right
+v= rotate head down
+g= rotate head up

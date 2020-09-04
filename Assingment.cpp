@@ -62,6 +62,12 @@ float tx = 0, ty = 0, tz = 0;
 float Ry = 0, Rx = -11, rSpeed = 1;
 float orthoview = 1;                 //yong 
 
+//lighting
+bool isLightOn = false;
+float amb[] = { 1, 1, 1 };    //white color  ambient light
+float lightPosition[] = { 0, 3, 0 };
+float lSpeed = 0.1;
+
 //Texture
 BITMAP BMP;             //bitmap structure
 HBITMAP hBMP = NULL;    //bitmap handle
@@ -123,18 +129,18 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			else if (elbowLeft == true)
 				elbowLeft = false;
 		}
-		else if (wParam == 0x59) {              //y = left shoulder up
-			if (shoulderTurnLeft == false)
-				shoulderTurnLeft = true;
-			else if (shoulderTurnLeft == true)
-				shoulderTurnLeft = false;
-		}
-		else if (wParam == 0x47) {             //g = right elbow up
-			if (elbowRight == false)
-				elbowRight = true;
-			else if (elbowRight == true)
-				elbowRight = false;
-		}
+		//else if (wParam == 0x59) {              //y = left shoulder up
+		//	if (shoulderTurnLeft == false)
+		//		shoulderTurnLeft = true;
+		//	else if (shoulderTurnLeft == true)
+		//		shoulderTurnLeft = false;
+		//}
+		//else if (wParam == 0x47) {             //g = right elbow up
+		//	if (elbowRight == false)
+		//		elbowRight = true;
+		//	else if (elbowRight == true)
+		//		elbowRight = false;
+		//}
 		else if (wParam == 0x48) {            //h = right shoulder up
 			if (shoulderTurnRight == false)
 				shoulderTurnRight = true;
@@ -143,16 +149,12 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		}
 
 		//////////////////////////////////////////////////////projection
-		else if (wParam == 0x4B)    //key k = Ortho
+		else if (wParam == 'Q')    //KEY Q= change view
 		{
-			isOrtho = true;
-			tz = 0;
+			isOrtho = !isOrtho;
+//			tz = 0;
 		}
-		else if (wParam == 0x4C)    //key l = Perspective
-		{
-			isOrtho = false;
-			tz = 0;
-		}
+
 		else if (wParam == 0x41)    //key A = view rotate
 			Ry -= rSpeed;
 
@@ -250,18 +252,41 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			if (headRotatex > -20)
 				headRotatex -= 0.5;
 		}
-		else if (wParam == 'V') {
+		else if (wParam == 'B') {
 			if (headRotatex < 20)
 				headRotatex += 0.5;
 		}
-		else if (wParam == 'B') {
+		else if (wParam == 'G') {
 			if (headRotatey < 5)
 				headRotatey += 0.5;
 		}
-		else if (wParam == 'N') {
+		else if (wParam == 'V') {
 			if (headRotatey > -3)
 				headRotatey -= 0.5;
 		}
+		else if (wParam == 'I')                          //I = light up
+		lightPosition[1] += lSpeed;
+
+		else if (wParam == 'K')                          //K = light down
+		lightPosition[1] -= lSpeed;
+
+
+		else if (wParam == 'J')                           //J = light left	
+		lightPosition[0] -= lSpeed;
+
+		else if (wParam == 'L')                          //L = light right
+		lightPosition[0] += lSpeed;
+
+		else if (wParam == 'Y')                         //Y = light back
+		lightPosition[2] -= lSpeed;
+
+		else if (wParam == 'U')                         //U = light front
+		lightPosition[2] += lSpeed;
+		else if (wParam == 0x0D)    //space = light
+		{
+			isLightOn = !isLightOn;
+		}
+
 
 		break;
 	default:
@@ -3560,6 +3585,31 @@ void projection() {
 	}
 }
 
+void lighting() {
+	//Light 0 - red color ambient light
+	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	glEnable(GL_LIGHT0);
+
+	//Light 1 - green color diffuse light
+	/*glLightfv(GL_LIGHT1, GL_DIFFUSE, diff);
+	glLightfv(GL_LIGHT1, GL_POSITION, posR);
+	glEnable(GL_LIGHT1);*/
+
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(lightPosition[0], lightPosition[1], lightPosition[2]);
+	sphere(0.1);
+	glPopMatrix();
+
+	if (isLightOn) {
+		glEnable(GL_LIGHTING);
+	}
+	else {
+		glDisable(GL_LIGHTING);
+	}
+}
+
 void display()
 {
 	switch (qNo)
@@ -3573,6 +3623,7 @@ void display()
 		glTranslatef(0, 0, tz);
 
 		projection();
+		lighting();
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();

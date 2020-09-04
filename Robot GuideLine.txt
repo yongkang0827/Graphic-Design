@@ -1,0 +1,55 @@
+1 = assignment
+
+
+3 = all action reset
+6 = change color
+
+
+
+////////////////weapon
+7 = gun
+8 = disappear gun
+9 = weapon
+0 = disapper weapon
+
+o = gun shoot
+p = weapon attack
+
+////////////////leg
+m = walking
+
+////////////////hand
+4 = left hand
+5 = right hand
+
+r = finger
+t = elbow
+y = shoulder 
+
+////////////////head
+c= rotate head left
+b= rotate head right
+v= rotate head down
+g= rotate head up
+
+q = change view (Ortho to Perspective or vice versa)
+
+
+a = rotate view left
+d = rotate view right
+w = rotate view up
+s = rotate view down
+
+up = fly up
+down = translate down
+left = translate left
+right = translate right
+//z = translate near
+//x = translate far
+
+j= move light source left
+l= move light source right
+i= move light source up
+k= move light source down
+y= move light source back
+u= move light source front

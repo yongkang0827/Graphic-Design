@@ -41,11 +41,11 @@ w = rotate view up
 s = rotate view down
 
 up = fly up
-down = translate down
+down = fly down
 left = translate left
 right = translate right
-//z = translate near
-//x = translate far
+z = slide front
+x = slide back
 
 j= move light source left
 l= move light source right
@@ -53,3 +53,4 @@ i= move light source up
 k= move light source down
 y= move light source back
 u= move light source front
+Space= open/close light

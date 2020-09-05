@@ -66,6 +66,7 @@ bool isLightOn = false;
 float amb[] = { 1, 1, 1 };    //white color  ambient light
 float lightPosition[] = { 0, 3, 0 };
 float lSpeed = 0.1;
+float posD[] = { 1,-1,0 };//diff light positionat right(5,0,0)
 
 //Texture
 BITMAP BMP;             //bitmap structure
@@ -73,6 +74,7 @@ HBITMAP hBMP = NULL;    //bitmap handle
 LPCSTR bodyText[6] = { "black steel.bmp", "white.bmp"};
 LPCSTR jointText[3] = { "white.bmp","Rusty Black Steel.bmp" };
 int changeBody1 = 0, changeBody2 = 1, changeJoint1 = 0;
+bool isTexture = true;
 
 LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -317,6 +319,11 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			{
 			isLightOn = !isLightOn;
 			}
+		else if (wParam == VK_RETURN)                         //enter = enable/disable texture
+			{
+			isTexture = !isTexture;
+			}
+
 		break;
 	default:
 		break;
@@ -370,7 +377,9 @@ GLuint loadTexture(LPCSTR filename) {
 	GetObject(hBMP, sizeof(BMP), &BMP);
 
 	//Step 4: Assign texture to polygon
-	glEnable(GL_TEXTURE_2D);
+	if (isTexture == true) {
+		glEnable(GL_TEXTURE_2D);
+	}else glDisable(GL_TEXTURE_2D);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -647,10 +656,11 @@ void drawCylinderLine(float baseRadius, float topRadius, float height, int slice
 };
 
 void turbo(LPCSTR filename) {
-	//glColor3f(1, 1, 0);
+
+
 	drawCircle(0.03);
 	cylinderTexture(0.031, 0.051, 0.02, filename);
-	cylinderTexture(0.03, 0.05, 0.02, filename);
+//	cylinderTexture(0.03, 0.05, 0.02, filename);
 	//glColor3f(0, 0, 0);
 	drawCylinderLine(0.029, 0.049, 0.02, 10, 1, "weaponHandle.bmp");
 	if (isTurbo) {
@@ -730,7 +740,12 @@ void thruster(LPCSTR filename1, LPCSTR filename2) {
 void bodyUp(float width, LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
-
+	
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
 	glBegin(GL_QUADS);
 	//	glColor3f(1, 0, 0);
 		//Face 1£º front
@@ -804,6 +819,11 @@ void bodyUp(float width, LPCSTR filename) {
 void bodyUpMid(float width, LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glBegin(GL_TRIANGLES);
 	//	glColor3f(0, 0, 1);
@@ -1580,6 +1600,8 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	glEnd();
 	glPopMatrix();
 
+	//head
+
 	glBegin(GL_TRIANGLES);
 	//	glColor3f(1, 0, 0);
 		//Face 1£º top
@@ -1605,7 +1627,6 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 
 	glEnd();
 
-	//head
 	glPushMatrix();
 	glTranslatef(0, 0.1, 0);
 	glScalef(1.2, 1.2, 1);
@@ -3632,10 +3653,14 @@ void projection() {
 }
 
 void lighting() {
-	//Light 0 - red color ambient light
+	//Light 0 - white color ambient light
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glEnable(GL_LIGHT0);
+
+	//glLightfv(GL_LIGHT1, GL_DIFFUSE, amb);
+	//glLightfv(GL_LIGHT1, GL_POSITION, posD);
+	//glEnable(GL_LIGHT1);
 
 	glPushMatrix();
 	glDisable(GL_LIGHTING);
@@ -3662,8 +3687,10 @@ void display()
 		//glClearColor(1, 1, 1, 1);
 
 		glTranslatef(0, 0, tz);
+//		sphereTexture(5, "sky.bmp");
 
 		projection();
+		lighting();
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -3692,6 +3719,8 @@ void display()
 				sliding += 0.01;
 		}
 		break;
+	//	glDisable(GL_TEXTURE_2D);
+
 	}
 	case 2:
 	{

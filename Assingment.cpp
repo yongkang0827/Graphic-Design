@@ -7,7 +7,7 @@
 
 #define WINDOW_TITLE "Robot"
 
-int qNo = 2;
+int qNo = 1;
 
 //Arm
 bool elbowRight = false, elbowLeft = false;
@@ -71,7 +71,7 @@ float posD[] = { 1,-1,0 };//diff light positionat right(5,0,0)
 //Texture
 BITMAP BMP;             //bitmap structure
 HBITMAP hBMP = NULL;    //bitmap handle
-LPCSTR bodyText[6] = { "black steel.bmp", "white.bmp"};
+LPCSTR bodyText[6] = { "black steel.bmp", "white.bmp" };
 LPCSTR jointText[3] = { "white.bmp","Rusty Black Steel.bmp" };
 int changeBody1 = 0, changeBody2 = 1, changeJoint1 = 0;
 bool isTexture = true;
@@ -89,9 +89,8 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			PostQuitMessage(0);
 		else if (wParam == 0x31)
 			qNo = 1;
-		else if (wParam == 0x32)
-			qNo = 2;
-		else if (wParam == 0x33)        //space to reset
+		
+		else if (wParam == 0x33)        //3 = space to reset
 		{
 			walkRight = false;
 			walkLeft = false;
@@ -107,7 +106,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			gunBig = false;
 		}
 
-		else if (wParam == 0x36)                      //change color
+		else if (wParam == 0x36)                      //6 = change color
 		{
 			if (changeBody1 == 0) {
 				changeBody1 = 1;
@@ -121,9 +120,9 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			}
 		}
 		else if (wParam == 0x34) {                     //hand Movement
-			if(leftHandMove == false)
+			if (leftHandMove == false)
 				leftHandMove = true;
-			else if(leftHandMove == true)
+			else if (leftHandMove == true)
 				leftHandMove = false;
 		}
 		else if (wParam == 0x35) {
@@ -133,12 +132,12 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				rightHandMove = false;
 		}
 		else if (wParam == 0x52) {                                  //r = finger 
-			if(leftHandMove == true && fingerLeft == false)        //left hand
+			if (leftHandMove == true && fingerLeft == false)        //left hand
 				fingerLeft = true;
 			else if (leftHandMove == true && fingerLeft == true)
 				fingerLeft = false;
 
-			if (rightHandMove == true && fingerRight == false) //right hand
+			if (rightHandMove == true && fingerRight == false)        //right hand
 				fingerRight = true;
 			else if (rightHandMove == true && fingerRight == true)
 				fingerRight = false;
@@ -154,7 +153,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			else if (rightHandMove == true && elbowRight == true)
 				elbowRight = false;
 		}
-		else if (wParam == 0x59) {                                     //y = shoulder
+		else if (wParam == 'F') {                                     //f = shoulder
 			if (leftHandMove == true && shoulderTurnLeft == false)        //left hand
 				shoulderTurnLeft = true;
 			else if (leftHandMove == true && shoulderTurnLeft == true)
@@ -178,31 +177,33 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			gunShootMove = true;
 
 		else if (wParam == 0x39) {                  //9 = weapon
-				weaponShow = true;
-				weaponBig = false;
-				weaponSmall = false;
+			weaponShow = true;
+			weaponBig = false;
+			weaponSmall = false;
 		}
 		else if (wParam == 0x30) {                  //0 = weapon////////////////////////////////////////////////////////////////////////////
 			weaponSmall = true;
 		}
-
 		else if (wParam == 0x50) {                 //p = weapon attack
-			if (weaponAttackMove == false) 
+			if (weaponAttackMove == false)
 				weaponAttackMove = true;
 			else if (weaponAttackMove == true) {
 				weaponAttackMove = false;
 				weaponAttackDown = false;
 			}
 		}
-		else if (wParam == 0x4D)                  //m = walking
-			walkRight = true;
 
-		//////////////////////////////////////////////////////projection
-		else if (wParam == 'Q')    //KEY Q= change view
-		{
-			isOrtho = !isOrtho;
-			//			tz = 0;
+		else if (wParam == 0x4D) {               //m = walking
+			if (walkRight == true || walkLeft == true) {
+				walkRight = false;
+				walkLeft = false;
+			}
+			else if (walkRight == false)
+				walkRight = true;
 		}
+		//////////////////////////////////////////////////////projection
+		else if (wParam == 0x32)    //KEY Q= change view
+			isOrtho = !isOrtho;
 
 		else if (wParam == 0x41)    //key A = view rotate
 			Ry -= rSpeed;
@@ -221,13 +222,13 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			flyingY += 0.1;
 		}
 		else if (wParam == VK_DOWN) {
-			if (flyingY <= 0) {
-				isTurbo = false;
-			}
-			else {
-				isTurbo = true;
-				flyingY -= 0.1;
-			}
+		if (flyingY <= 0) {
+			isTurbo = false;
+		}
+		else {
+			isTurbo = true;
+			flyingY -= 0.1;
+		}
 		}
 		else if (wParam == VK_LEFT)         //tx
 			flyingX -= 0.1;
@@ -240,95 +241,94 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			sliding = 30;
 			slideMove += 0.3;
 
-			//if (isOrtho) {
-			//	if (tz < 1.0) {
-			//		tz += tSpeed;
-			//	}
-			//}
-			//else {
-			//	if (tz < 1.0) {
-			//		tz += tSpeed;
-			//	}
-			//}
+		//if (isOrtho) {
+		//	if (tz < 1.0) {
+		//		tz += tSpeed;
+		//	}
+		//}
+		//else {
+		//	if (tz < 1.0) {
+		//		tz += tSpeed;
+		//	}
+		//}
 		}
 		else if (wParam == 0x58)      //key x
 		{
 			isTurbo = true;
 			sliding = -30;
 			slideMove -= 0.3;
-			//if (isOrtho) {
-				//	if (tz > -1.0) {
-				//		tz -= tSpeed;
-				//	}
-				//}
-				//else {
-				//	if (tz > -1.0) {
-				//		tz -= tSpeed;
-				//	}
-				//}
+		//if (isOrtho) {
+			//	if (tz > -1.0) {
+			//		tz -= tSpeed;
+			//	}
+			//}
+			//else {
+			//	if (tz > -1.0) {
+			//		tz -= tSpeed;
+			//	}
+			//}
 		}
 		///////////////////////////////yong 
-		else if (wParam == 0xBD) {		// key -
-			if (isOrtho) {
-				if (orthoview < 5)
-					orthoview += 0.5;
-			}
+		/*else if (wParam == 0xBD) {		// key -
+		if (isOrtho) {
+			if (orthoview < 5)
+				orthoview += 0.5;
+		}
 		}
 		else if (wParam == 0xBB) {		// key +
-			if (isOrtho) {
-				if (orthoview > 1)
-					orthoview -= 0.5;
-			}
+		if (isOrtho) {
+			if (orthoview > 1)
+				orthoview -= 0.5;
 		}
+		}*/
 		//head rotate
 		else if (wParam == 'C') {
-			if (headRotatex > -20)
-				headRotatex -= 0.5;
+		if (headRotatex > -20)
+			headRotatex -= 0.5;
 		}
 		else if (wParam == 'B') {
-			if (headRotatex < 20)
-				headRotatex += 0.5;
+		if (headRotatex < 20)
+			headRotatex += 0.5;
 		}
 		else if (wParam == 'G') {
-			if (headRotatey < 5)
-				headRotatey += 0.5;
+		if (headRotatey < 5)
+			headRotatey += 0.5;
 		}
 		else if (wParam == 'V') {
-			if (headRotatey > -3)
-				headRotatey -= 0.5;
+		if (headRotatey > -3)
+			headRotatey -= 0.5;
 		}
 		//Light
 		else if (wParam == 'I')                          //I = light up
-			lightPosition[1] += lSpeed;
+		lightPosition[1] += lSpeed;
 
 		else if (wParam == 'K')                          //K = light down
-			lightPosition[1] -= lSpeed;
+		lightPosition[1] -= lSpeed;
 
 		else if (wParam == 'J')                           //J = light left	
-			lightPosition[0] -= lSpeed;
+		lightPosition[0] -= lSpeed;
 
 		else if (wParam == 'L')                          //L = light right
-			lightPosition[0] += lSpeed;
+		lightPosition[0] += lSpeed;
 
 		else if (wParam == 'Y')                         //Y = light back
-			lightPosition[2] -= lSpeed;
+		lightPosition[2] -= lSpeed;
 
 		else if (wParam == 'U')                         //U = light front
-			lightPosition[2] += lSpeed;
+		lightPosition[2] += lSpeed;
 		else if (wParam == VK_SPACE)                         //space = light
-			{
+		{
 			isLightOn = !isLightOn;
-			}
+		}
 		else if (wParam == VK_RETURN)                         //enter = enable/disable texture
-			{
+		{
 			isTexture = !isTexture;
-			}
+		}
 
 		break;
 	default:
 		break;
 	}
-
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 //--------------------------------------------------------------------
@@ -379,7 +379,8 @@ GLuint loadTexture(LPCSTR filename) {
 	//Step 4: Assign texture to polygon
 	if (isTexture == true) {
 		glEnable(GL_TEXTURE_2D);
-	}else glDisable(GL_TEXTURE_2D);
+	}
+	else glDisable(GL_TEXTURE_2D);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -754,7 +755,7 @@ void thruster(LPCSTR filename1, LPCSTR filename2) {
 void bodyUp(float width, LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
-	
+
 	if (!isTexture)
 	{
 		glColor3f(1, 0, 0);
@@ -1298,7 +1299,7 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 	glTranslatef(0, 0, -width);
 	bodyRight(width, filename1);
 	glPopMatrix();
-	
+
 	//lowerbody
 	glPushMatrix();
 	glTranslatef(0, -0.08, 0);
@@ -1963,9 +1964,9 @@ void weaponTrans() {
 //////////////////////////////////////Gun
 void gunShoot() {
 	glPushMatrix();
-	if (bulletMove < 3) 
-		bulletMove += bulletSp;	
-	else 
+	if (bulletMove < 3)
+		bulletMove += bulletSp;
+	else
 		bulletMove = 0;
 
 	glTranslatef(bulletMove, 0, 0);
@@ -1984,6 +1985,11 @@ void gunShoot() {
 }
 
 void gun() {
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 1);
+	}
+	else glColor3f(1, 1, 1);
 	glPushMatrix();
 	if (gunBig == true && gunSmall == false) {
 		if (gunScale < 1) {
@@ -2000,7 +2006,7 @@ void gun() {
 			elbowRight = true;
 		}
 
-		if (gunShootMove == true) 
+		if (gunShootMove == true)
 			gunShoot();
 	}
 	if (gunBig == false && gunSmall == false) {
@@ -2200,7 +2206,12 @@ void gunTrans() {
 void shoulder(LPCSTR textBody1) {
 	GLuint texture;
 	texture = loadTexture(textBody1);
-	
+
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 	glBegin(GL_QUADS);
 	//Face size : Bottom
 	glTexCoord2f(0.0f, 0.0f);
@@ -2347,6 +2358,11 @@ void shoulder(LPCSTR textBody1) {
 
 void upHand(LPCSTR textBody1, LPCSTR textJoin1) {
 
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 1);
+	}
+	else glColor3f(1, 1, 1);
 	glPushMatrix();
 	glTranslatef(0, 0.025, 0.025);
 
@@ -2409,6 +2425,12 @@ void upHand(LPCSTR textBody1, LPCSTR textJoin1) {
 }
 
 void robotArmDecor1(float point, float point2) {
+	if (!isTexture)
+	{
+		glColor3f(0, 0, 1);
+	}
+	else glColor3f(1, 1, 1);
+
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, 0);
@@ -2447,6 +2469,11 @@ void robotArmDecor1(float point, float point2) {
 }
 
 void robotArmDecor2() {
+	if (!isTexture)
+	{
+		glColor3f(0, 0, 1);
+	}
+	else glColor3f(1, 1, 1);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, 0.2);
@@ -2479,6 +2506,11 @@ void robotArm(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 	GLuint texture;
 	texture = loadTexture(textJoin1);
 
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
 	glBegin(GL_TRIANGLES);    //Pyramid on Arm
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, 0);
@@ -2513,7 +2545,7 @@ void robotArm(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 
 	glPushMatrix();         //Big Quads Arm
 	texture = loadTexture(textBody1);
-	
+
 	glBegin(GL_QUADS);
 	//Face size : Bottom
 	glTexCoord2f(0.0f, 1.0f);
@@ -2608,6 +2640,11 @@ void robotArm(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 }
 
 void palm(LPCSTR textBody1) {
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 	glPushMatrix();
 	glTranslatef(0.5, 0, 0.1);
 	drawCubeTexture(0.15, 0.2, 0.05, textBody1);
@@ -2616,6 +2653,11 @@ void palm(LPCSTR textBody1) {
 }
 
 void thumb(LPCSTR textBody2) {
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 1);
+	}
+	else glColor3f(1, 1, 1);
 	glPushMatrix();
 	glTranslatef(0.5, 0.19, 0.1);
 	drawCubeTexture(0.05, 0.06, 0.05, textBody2);
@@ -2625,6 +2667,11 @@ void thumb(LPCSTR textBody2) {
 
 void robotFinger(LPCSTR textBody2)
 {
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 1);
+	}
+	else glColor3f(1, 1, 1);
 	glPushMatrix();                     //finger connector
 	glTranslatef(0.636, 0.025, 0.12);
 	sphereTexture(0.02, textBody2);                       //first
@@ -2678,7 +2725,7 @@ void leftHand() {
 		glTranslatef(-0.6, 0.13, 0);
 		glRotatef(actShoulderLeft, 0, 0, -1);
 		glTranslatef(0.6, -0.13, 0);
-		if (actShoulderLeft > 90) {
+		if (actShoulderLeft > 80) {
 			weaponAttackDown = true;
 		}
 	}
@@ -2725,7 +2772,7 @@ void leftHand() {
 	if (weaponShow == true)                           ///////Weapon
 		weaponTrans();
 
-	if (weaponBig == true|| weaponSmall == true) {
+	if (weaponBig == true || weaponSmall == true) {
 		weapon();
 		if (weaponBig == true)
 			fingerLeft = true;
@@ -2817,7 +2864,7 @@ void leftHand() {
 		glRotatef(actRotatFing2Left, 0, 1, 0);
 		glTranslatef(-0.65, 0, -0.09);
 	}
-	
+
 	robotFinger(bodyText[changeBody2]);
 	/////////////////////////////////////
 	glPushMatrix();
@@ -2896,7 +2943,7 @@ void rightHand() {
 		glRotatef(actRotateElbowRight, 0, 0, 1);
 		glTranslatef(0, -0.2, 0);
 	}
-	else if (elbowRight == false) { 
+	else if (elbowRight == false) {
 		if (actRotateElbowRight > 0) {
 			actRotateElbowRight -= rotatfinger;
 		}
@@ -2918,7 +2965,7 @@ void rightHand() {
 		if (gunSmall == true)
 			fingerRight = false;
 	}
-		
+
 	robotArm(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);    //arm
 
 	glPushMatrix();
@@ -3062,6 +3109,11 @@ void hand() {
 
 ///////////////////////////////////////////////Leg
 void sharpCorner(LPCSTR textBody2) {
+	if (!isTexture)
+	{
+		glColor3f(0, 0, 1);
+	}
+	else glColor3f(1, 1, 1);
 	GLuint texture;
 	texture = loadTexture(textBody2);
 
@@ -3099,6 +3151,11 @@ void sharpCorner(LPCSTR textBody2) {
 }
 
 void upLeg(LPCSTR textBody1, LPCSTR textBody2) {
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 1);
+	}
+	else glColor3f(1, 1, 1);
 	glPushMatrix();
 	glScalef(0.5, 0.6, 0.3);
 	drawCubeTexture(0.5, 1, 0.5, textBody1);
@@ -3292,6 +3349,11 @@ void rightUpLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1)
 }
 
 void downLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1) {
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
 	glPushMatrix();
 	glTranslatef(0, 0.3, -0.13);
 	glRotatef(60, 1, 0, 0);
@@ -3423,6 +3485,11 @@ void downLeg(LPCSTR textBody1, LPCSTR textBody2, LPCSTR textJoin1) {
 	glDeleteTextures(1, &texture);
 	glDisable(GL_TEXTURE_2D);
 
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 	texture = loadTexture(textBody2);
 	glBegin(GL_TRIANGLES);        //shoe      
 	glTexCoord2f(0.5f, 1.0f);       //up
@@ -3585,16 +3652,30 @@ void projection() {
 	glLoadIdentity();
 
 	glTranslatef(tx, ty, 0);
-
-	glRotatef(Rx, 1, 0, 0);
-	glRotatef(Ry, 0, 1, 0);
-
+	//glRotatef(Rx, 1, 0, 0);
+	
 	if (isOrtho) {
-		glOrtho(-orthoview, orthoview, -orthoview, orthoview, -orthoview, orthoview);
+		glOrtho(-1, 1, -1, 1, -1, 10);
+		glRotatef(Ry, 0, 1, 0);
+
+		//glOrtho(-orthoview, orthoview, -orthoview, orthoview, -orthoview, orthoview);
+		glPushMatrix();
+		glTranslatef(0, 0, -0.5);
+		sphereTexture(2, "sky.bmp");
+		glPopMatrix();
+		
 	}
 	else {
-		gluPerspective(16, 1, -1, 1);
-		glFrustum(-1, 1, -1, 1, 1, 17);
+		gluPerspective(40, 1, -1, 1);
+		glFrustum(-1, 1, -1, 1, 1, 3);
+		glDisable(GL_DEPTH_TEST);
+
+		glPushMatrix();
+		glTranslatef(0, 0, -0.5);
+		sphereTexture(2, "sky.bmp");
+		glPopMatrix();
+
+		glEnable(GL_DEPTH_TEST);
 	}
 }
 
@@ -3633,7 +3714,7 @@ void display()
 		//glClearColor(1, 1, 1, 1);
 
 		glTranslatef(0, 0, tz);
-//		sphereTexture(5, "sky.bmp");
+		//		sphereTexture(5, "sky.bmp");
 
 		projection();
 		lighting();
@@ -3641,11 +3722,16 @@ void display()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		glTranslatef(0, 0, tz);
+		if (!isOrtho)
+			glRotatef(-Ry, 0, 1, 0);             //rotate the object if perspective
+
+		glPushMatrix();
+		glScalef(0.5, 0.5, 0.5);
 
 		if (walkRight == true || walkLeft == true) {   //walking
 			walking += walkingSp;
 		}
-		glTranslatef(0, 0, walking);
 		glTranslatef(0, 0, walking);
 		glTranslatef(flyingX, flyingY, 0);
 		glTranslatef(0, 0, slideMove);
@@ -3664,9 +3750,9 @@ void display()
 			for (int i = 0; i > sliding; sliding++)
 				sliding += 0.01;
 		}
+		glPopMatrix();
 		break;
-	//	glDisable(GL_TEXTURE_2D);
-
+		//	glDisable(GL_TEXTURE_2D);
 	}
 	case 2:
 	{
@@ -3678,10 +3764,8 @@ void display()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glPushMatrix();
-
-		//hand();
-		leg();
 		
+
 		glPopMatrix();
 		break;
 	}

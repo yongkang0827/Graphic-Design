@@ -3,7 +3,7 @@
 
 3 = all action reset
 6 = change color
-Enter = diable/enable texture
+Enter = disable/enable texture
 
 
 ////////////////weapon
@@ -32,7 +32,7 @@ b= rotate head right
 v= rotate head down
 g= rotate head up
 
-q = change view (Ortho to Perspective or vice versa)
+2 = change view (Ortho to Perspective or vice versa)
 
 
 a = rotate view left

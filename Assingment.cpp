@@ -655,6 +655,7 @@ void drawCylinderLine(float baseRadius, float topRadius, float height, int slice
 	glDeleteTextures(1, &texture);
 };
 
+
 void turbo(LPCSTR filename) {
 
 
@@ -901,6 +902,7 @@ void tri(LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
 
+
 	glBegin(GL_TRIANGLES);
 	//	glColor3f(1, 0, 0);
 		//front
@@ -1033,6 +1035,12 @@ void bodyMidTri(float width, LPCSTR filename) {
 
 void bodyMid(float width, LPCSTR filename1, LPCSTR filename2) {
 	bodyMidTri(width, filename2);
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
+
 
 	float i, j;
 	glPushMatrix();
@@ -1046,6 +1054,11 @@ void bodyMid(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPopMatrix();
 	for (j = 0.1; j < 0.7; j += 0.1) {
 		for (i = 0; i < 360; i += 30) {
+			if (!isTexture)
+			{
+				glColor3f(0, 0, 1);
+			}
+			else glColor3f(1, 1, 1);
 			glPushMatrix();
 			glRotatef(-i, 0, 1, 0);
 			glTranslatef(0.2, -j, 0);
@@ -1077,6 +1090,11 @@ void bodyMid(float width, LPCSTR filename1, LPCSTR filename2) {
 void bodySide(float width, LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glBegin(GL_QUADS);
 	//	glColor3f(1, 1, 0);
@@ -1181,6 +1199,11 @@ void bodyRight(float width, LPCSTR filename) {
 void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	GLuint textures[2];
 	textures[0] = loadTexture(filename1);
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glBegin(GL_QUADS);
 	//	glColor3f(1, 1, 0);
@@ -1253,6 +1276,12 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 	glDeleteTextures(1, &textures[0]);
 	glDisable(GL_TEXTURE_2D);
 
+	if (!isTexture)
+	{
+		glColor3f(0, 0, 1);
+	}
+	else glColor3f(1, 1, 1);
+
 	glPushMatrix();
 	//	glColor3f(1, 0, 1);
 	glTranslatef(-0.2, -0.3, -0.1);
@@ -1264,6 +1293,11 @@ void lowerBody(float width, LPCSTR filename1, LPCSTR filename2) {
 void neck(float width, LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glBegin(GL_QUADS);
 	//	glColor3f(0, 0, 0);
@@ -1400,6 +1434,11 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 void face(float width, LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glBegin(GL_QUADS);
 	//	glColor3f(0, 0, 1);
@@ -1478,6 +1517,11 @@ void face(float width, LPCSTR filename) {
 void mouth(LPCSTR filename) {
 	GLuint texture;
 	texture = loadTexture(filename);
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glBegin(GL_QUADS);
 	//	glColor3f(0, 0, 0);
@@ -1568,6 +1612,11 @@ void mouth(LPCSTR filename) {
 void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	GLuint textures[2];
 	textures[0] = loadTexture(filename1);
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	//MASK
 	glPushMatrix();
@@ -1601,6 +1650,11 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPopMatrix();
 
 	//head
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glBegin(GL_TRIANGLES);
 	//	glColor3f(1, 0, 0);
@@ -1626,6 +1680,11 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	glVertex3f(0.16, -0.349, 0);
 
 	glEnd();
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
 
 	glPushMatrix();
 	glTranslatef(0, 0.1, 0);
@@ -1665,6 +1724,12 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 	textures[1] = loadTexture(filename2);
 
 	//eye
+	if (!isTexture)
+	{
+		glColor3f(1, 1, 0);
+	}
+	else glColor3f(1, 1, 1);
+
 	glPushMatrix();
 	//	glColor3f(1, 1, 0);
 	glTranslatef(0.03, -0.07, 0.02);
@@ -1696,6 +1761,12 @@ void head(float width, LPCSTR filename1, LPCSTR filename2) {
 
 
 	//ear
+	if (!isTexture)
+	{
+		glColor3f(1, 0, 0);
+	}
+	else glColor3f(1, 1, 1);
+
 	glPushMatrix();
 	glRotatef(-20, 0, 0, 1);
 	glTranslatef(0.26, -0.35, 0);

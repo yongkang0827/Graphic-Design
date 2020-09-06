@@ -109,6 +109,11 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			legMoveRight = false;
 			legMoveX = 0;
 			legMoveY = 0;
+			sliding = 0;
+			slideMove = 0;
+			flyingX = 0;
+			flyingY = 0;
+			isTurbo = false;
 		}
 
 		else if (wParam == 0x36)                      //6 = change color
@@ -276,8 +281,10 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		}
 
 		else if (wParam == VK_UP) {
+		if (flyingY < 1) {
 			isTurbo = true;
 			flyingY += 0.1;
+		}
 		}
 		else if (wParam == VK_DOWN) {
 		if (flyingY <= 0) {
@@ -288,22 +295,32 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			flyingY -= 0.1;
 		}
 		}
-		else if (wParam == VK_LEFT)         //tx
+		else if (wParam == VK_LEFT) {
+		if (flyingX >= -1) {
 			flyingX -= 0.1;
-		else if (wParam == VK_RIGHT)
+		}
+		}
+		else if (wParam == VK_RIGHT) {
+		if (flyingX <= 1) {
 			flyingX += 0.1;
+		}
+		}
 
 		else if (wParam == 0x5A)      //key z = object z 
 		{
-			isTurbo = true;
-			sliding = 30;
-			slideMove += 0.3;
+			if (slideMove < 2) {
+				isTurbo = true;
+				sliding = 30;
+				slideMove += 0.3;
+			}
 		}
 		else if (wParam == 0x58)      //key x
 		{
-			isTurbo = true;
-			sliding = -30;
-			slideMove -= 0.3;
+			if (slideMove > -2) {
+				isTurbo = true;
+				sliding = -30;
+				slideMove -= 0.3;
+			}
 		}
 		///////////////////////////////yong 
 		//head rotate
@@ -1299,7 +1316,7 @@ void body(float width, LPCSTR filename1, LPCSTR filename2) {
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(0.245, 0.2, -0.06);
+	glTranslatef(0.245, 0.2, -0.05);
 	drawCircle(0.035);
 	glTranslatef(0, 0, -0.001);
 	drawCircle(0.03);
@@ -3742,6 +3759,12 @@ void robotWalking() {
 		glTranslatef(0, 0, -walking);
 }
 
+void flying() {
+	glTranslatef(flyingX, flyingY, 0);
+	glTranslatef(0, 0, slideMove);
+	glRotatef(sliding, 1, 0, 0);
+}
+
 /////////////////////////////////////////Projection
 void backGround() {
 	if (!isTexture)
@@ -3822,9 +3845,7 @@ void display()
 	glScalef(0.5, 0.5, 0.5);
 
 	robotWalking();                            //walking
-	glTranslatef(flyingX, flyingY, 0);
-	glTranslatef(0, 0, slideMove);
-	glRotatef(sliding, 1, 0, 0);
+	flying();
 	headAndBody(bodyText[changeBody1], jointText[changeBody1]);
 	hand();
 	leg();

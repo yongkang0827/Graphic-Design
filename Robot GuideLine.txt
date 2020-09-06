@@ -1,10 +1,12 @@
-1 = assignment
-
+1 = change view (Ortho to Perspective or vice versa)
+2 = translatef view in x axis or y axis
 
 3 = all action reset
 6 = change color
-Enter = disable/enable texture
+Enter = diable/enable texture
 
+q = translate far
+e = translate near
 
 ////////////////weapon
 7 = gun
@@ -17,6 +19,8 @@ p = weapon attack
 
 ////////////////leg
 m = walking
+h = leg move front or back
+n = leg move left or right
 
 ////////////////hand
 4 = left hand
@@ -24,7 +28,7 @@ m = walking
 
 r = finger
 t = elbow
-y = shoulder 
+f = shoulder 
 
 ////////////////head
 c= rotate head left
@@ -32,13 +36,12 @@ b= rotate head right
 v= rotate head down
 g= rotate head up
 
-2 = change view (Ortho to Perspective or vice versa)
-
-
+///////////Projection
 a = rotate view left
 d = rotate view right
-w = rotate view up
-s = rotate view down
+
+w = translate view up or left
+s = translate view down or right
 
 up = fly up
 down = fly down

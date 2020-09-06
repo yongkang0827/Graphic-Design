@@ -7,8 +7,6 @@
 
 #define WINDOW_TITLE "Robot"
 
-int qNo = 1;
-
 //Arm
 bool elbowRight = false, elbowLeft = false;
 bool shoulderTurnRight = false, shoulderTurnLeft = false;
@@ -31,8 +29,8 @@ float weaponSp = 0.05, weaponTransUp, weaponTransFront, weaponScale, weaponScale
 int elect = 0, electSp = 1;
 
 //Leg
-bool walkRight, walkLeft;
-float walkRightKnee, walkUpRightKnee, walkLeftKnee, walkUpLeftKnee;
+bool walkRight, walkLeft, legMoveFront, legMoveBack, legMoveLeft, legMoveRight;
+float walkRightKnee, walkUpRightKnee, walkLeftKnee, walkUpLeftKnee, legMoveX, legMoveY, legMoveSp = 2;
 float walkSpeed = 2, walkKneeSpeed = 0.016;
 float walking, walkingSp = 0.0064;
 
@@ -52,12 +50,14 @@ float flyingY = 0;
 
 //thruster
 bool isTurbo = false;
+float fireLengthCone, fireLengthCylin;
+int fire = 0, fireSp = 1;
 
 //Projection
 bool isOrtho = true;
 
-float tSpeed = 0.1;
-float tx = 0, ty = 0, tz = 0;
+bool txView, tyView = true;
+float tx = 0, ty = 0, tz = 0, tSpeed = 0.1;
 float Ry = 0, Rx = -11, rSpeed = 5;
 float orthoview = 1;                 //yong 
 
@@ -87,9 +87,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 	case WM_KEYDOWN:                                     //press long key
 		if (wParam == VK_ESCAPE)                         //Param = parameter, VK = virtual key
 			PostQuitMessage(0);
-		else if (wParam == 0x31)
-			qNo = 1;
-		
+
 		else if (wParam == 0x33)        //3 = space to reset
 		{
 			walkRight = false;
@@ -104,6 +102,13 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			headRotatey = 0;
 			weaponBig = false;
 			gunBig = false;
+			walking = 0;
+			legMoveFront = false;
+			legMoveBack = false;
+			legMoveLeft = false;
+			legMoveRight = false;
+			legMoveX = 0;
+			legMoveY = 0;
 		}
 
 		else if (wParam == 0x36)                      //6 = change color
@@ -201,21 +206,72 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			else if (walkRight == false)
 				walkRight = true;
 		}
-		//////////////////////////////////////////////////////projection
-		else if (wParam == 0x32)    //KEY Q= change view
+
+		else if (wParam == 'H') {
+			if (legMoveFront == false) {
+				legMoveFront = true;
+				legMoveBack = false;
+			}
+			else if (legMoveBack == false) {
+				legMoveBack = true;
+				legMoveFront = false;
+			}
+		}
+		else if (wParam == 'N') {
+			if (legMoveLeft == false) {
+				legMoveLeft = true;
+				legMoveRight = false;
+			}
+			else if (legMoveRight == false) {
+				legMoveRight = true;
+				legMoveLeft = false;
+			}
+		}
+		///////////////////////////////////////////////////////////projection
+		else if (wParam == 0x31)                //KEY 1= change view
 			isOrtho = !isOrtho;
 
-		else if (wParam == 0x41)    //key A = view rotate
+		else if (wParam == 0x32) {              //key 2 = translatef x or y
+			if (txView == false && tyView == true) {
+				txView = true;
+				tyView = false;
+			}
+			else if (tyView == false && txView == true) {
+				tyView = true;
+				txView = false;
+			}
+		}
+
+		else if (wParam == 0x41)             //key A = view rotate
 			Ry -= rSpeed;
 
-		else if (wParam == 0x44)    //key D = view rotate
+		else if (wParam == 0x44)             //key D = view rotate
 			Ry += rSpeed;
 
-		else if (wParam == 0x57)    //key W = view rotate
-			Rx -= rSpeed;
-
-		else if (wParam == 0x53)    //key S = view rotate
-			Rx += rSpeed;
+		else if (wParam == 0x57) {            //key W = view rotate
+			if (tyView == true && ty > -0.3)
+				ty -= tSpeed;
+			else if (txView == true && tx > -0.2)
+				tx -= tSpeed;
+		}
+		else if (wParam == 0x53) {             //key S = view rotate
+			if (tyView == true && ty < 0.3)
+				ty += tSpeed;
+			else if (txView == true && tx < 0.2)
+				tx += tSpeed;
+		}
+		else if (wParam == 'Q') {             //key q = view rotate
+			if (isOrtho && tz < 0.8) 
+				tz += tSpeed;
+			else if (!isOrtho && tz < 1.4) 
+				tz += tSpeed;
+		}
+		else if (wParam == 'E') {             //key e = view rotate
+			if(isOrtho && tz > -0.1)
+				tz -= tSpeed;
+			else if(!isOrtho && tz > -0.5)
+				tz -= tSpeed;
+		}
 
 		else if (wParam == VK_UP) {
 			isTurbo = true;
@@ -240,33 +296,12 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			isTurbo = true;
 			sliding = 30;
 			slideMove += 0.3;
-
-		//if (isOrtho) {
-		//	if (tz < 1.0) {
-		//		tz += tSpeed;
-		//	}
-		//}
-		//else {
-		//	if (tz < 1.0) {
-		//		tz += tSpeed;
-		//	}
-		//}
 		}
 		else if (wParam == 0x58)      //key x
 		{
 			isTurbo = true;
 			sliding = -30;
 			slideMove -= 0.3;
-		//if (isOrtho) {
-			//	if (tz > -1.0) {
-			//		tz -= tSpeed;
-			//	}
-			//}
-			//else {
-			//	if (tz > -1.0) {
-			//		tz -= tSpeed;
-			//	}
-			//}
 		}
 		///////////////////////////////yong 
 		/*else if (wParam == 0xBD) {		// key -
@@ -678,10 +713,22 @@ void turbo(LPCSTR filename) {
 			glColor3f(0, 0, 1);
 		}
 		else glColor3f(1, 1, 1);
-		drawCone(0.05, 0.05, 50, 50, "fire.bmp");
+		fire += fireSp;
+		if (fire % 2 == 0) {
+			fireLengthCone = 0.0625;
+			fireLengthCylin = 0.025;
+		}
+		else {
+			fireLengthCone = 0.05;
+			fireLengthCylin = 0.02;
+		}
+		if (fire > 100) {
+			fire = 0;
+		}
+		drawCone(0.05, fireLengthCone, 50, 50, "fire.bmp");
 		glPushMatrix();
 		glTranslatef(0, 0, 0.05);
-		drawCylinder2(0.048, 0.02, 0.03, 30, 30, "fire.bmp");
+		drawCylinder2(0.048, fireLengthCylin, 0.03, 30, 30, "fire.bmp");
 		glPopMatrix();
 	}
 }
@@ -1962,10 +2009,22 @@ void weaponTrans() {
 }
 
 //////////////////////////////////////Gun
+void gunExplore() {
+	glPushMatrix();
+	glTranslatef(4, 0, 0);
+	sphereTexture(0.3, "fire.bmp");
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+}
+
 void gunShoot() {
 	glPushMatrix();
-	if (bulletMove < 3)
+	if (bulletMove < 3) {
 		bulletMove += bulletSp;
+
+		if (bulletMove > 2.9)
+			gunExplore();
+	}
 	else
 		bulletMove = 0;
 
@@ -2457,14 +2516,14 @@ void robotArmDecor1(float point, float point2) {
 	glTexCoord2f(0.5f, 1.0f);
 	glVertex3f(0, 0.1, 0);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, 0, 0.1);
+	glVertex3f(0, 0, point2);
 
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0.2, 0);
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(0, 0.1, 0);
 	glTexCoord2f(0.5f, 1.0f);
-	glVertex3f(0, 0.2, 0.1);
+	glVertex3f(0, 0.2, point2);
 	glEnd();
 }
 
@@ -2742,6 +2801,7 @@ void leftHand() {
 	glTranslatef(-0.6, 0.1, -0.05);
 	glScalef(0.7, 0.7, 1);
 	sphereTexture(0.1, jointText[changeJoint1]);
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2750,12 +2810,12 @@ void leftHand() {
 	glRotatef(-90, 1, 0, 0);
 	glScalef(0.5, 0.5, 0.5);
 
-	shoulder(bodyText[changeBody1]);         //shoulder
+	shoulder(bodyText[changeBody1]);                     //shoulder
 	glPopMatrix();
 
 	upHand(bodyText[changeBody1], jointText[changeJoint1]);      //UpHand
 
-	glPushMatrix();               //rotate elbow up
+	glPushMatrix();                                  //rotate elbow up
 	if (elbowLeft == true) {
 		if (actRotateElbowLeft > -90) {
 			actRotateElbowLeft -= rotatfinger;
@@ -2791,6 +2851,7 @@ void leftHand() {
 	glPushMatrix();                        //left thumb connector
 	glTranslatef(0.525, 0.01, 0.12);
 	sphereTexture(0.02, jointText[changeJoint1]);
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2920,6 +2981,7 @@ void rightHand() {
 	glTranslatef(-0.6, 0.1, -0.05);
 	glScalef(0.7, 0.7, 1);
 	sphereTexture(0.1, jointText[changeJoint1]);
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -2977,6 +3039,7 @@ void rightHand() {
 	glPushMatrix();                        // thumb connector
 	glTranslatef(0.525, 0.19, 0.12);
 	sphereTexture(0.02, bodyText[changeBody2]);
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -3561,6 +3624,25 @@ void leg() {
 	glTranslatef(0, -0.9, 0.2);
 	glRotatef(180, 0, 1, 0);
 	glScalef(0.8, 1, 1);
+
+	glPushMatrix();                         //move whole left leg
+	if (legMoveFront == true && legMoveX < 20) {        //move front
+		legMoveX += legMoveSp;
+	}
+	else if (legMoveBack == true && legMoveX > -20) {     //move back
+		legMoveX -= legMoveSp;
+	}
+	else if (legMoveLeft == true && legMoveY > -5) {        //move left
+		legMoveY -= legMoveSp;
+	}
+	else if (legMoveRight == true && legMoveY < 5) {        //move left
+		legMoveY += legMoveSp;
+	}
+
+	glTranslatef(0, 0.6, 0);                                //Rotate whole leg
+	glRotatef(legMoveX, 1, 0, 0); 
+	glRotatef(-legMoveY, 0, 0, 1);
+	glTranslatef(0, -0.6, 0);
 	//////////////////////////////////////////////Left Leg
 	glPushMatrix();
 	glTranslatef(-0.2, 0, 0);
@@ -3602,9 +3684,19 @@ void leg() {
 	leftDownLeg(bodyText[changeBody1], bodyText[changeBody2], jointText[changeJoint1]);
 	glPopMatrix();
 	glPopMatrix();
-	////////////////////////////////////////////////////////////Right Leg
+	glPopMatrix();
+	//////////////////////////////////////////////////////////////////////////////////Right Leg
 	glPushMatrix();
 	glTranslatef(0.2, 0, 0);
+
+	glPushMatrix();                         //move whole right leg
+	/*if (legMoveFront == true && legMoveX < 20) {
+		legMoveX += legMoveSp;
+	}*/
+	glTranslatef(0, 0.6, 0);
+	glRotatef(legMoveX, 1, 0, 0);
+	glRotatef(-legMoveY, 0, 0, 1);
+	glTranslatef(0, -0.6, 0);
 
 	glPushMatrix();                  //move Right up leg
 	if (walkRight == true) {
@@ -3644,37 +3736,51 @@ void leg() {
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
+	glPopMatrix();
+}
+
+void robotWalking() {
+	if (walkRight == true || walkLeft == true) {   //walking
+		if (walking < 1)
+			walking += walkingSp;
+		else if (walking > 1) {
+			walkRight = false;
+			walkLeft = false;
+		}
+	}
+	if(isOrtho)
+		glTranslatef(0, 0, walking);
+	else if(!isOrtho)
+		glTranslatef(0, 0, -walking);
 }
 
 /////////////////////////////////////////Projection
+void backGround() {
+	glPushMatrix();
+	glTranslatef(0, 0, -0.5);
+	sphereTexture(2, "sky.bmp");
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+}
+
 void projection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	glTranslatef(tx, ty, 0);
-	//glRotatef(Rx, 1, 0, 0);
 	
 	if (isOrtho) {
 		glOrtho(-1, 1, -1, 1, -1, 10);
 		glRotatef(Ry, 0, 1, 0);
 
-		//glOrtho(-orthoview, orthoview, -orthoview, orthoview, -orthoview, orthoview);
-		glPushMatrix();
-		glTranslatef(0, 0, -0.5);
-		sphereTexture(2, "sky.bmp");
-		glPopMatrix();
-		
+		backGround();
 	}
 	else {
 		gluPerspective(40, 1, -1, 1);
 		glFrustum(-1, 1, -1, 1, 1, 3);
 		glDisable(GL_DEPTH_TEST);
 
-		glPushMatrix();
-		glTranslatef(0, 0, -0.5);
-		sphereTexture(2, "sky.bmp");
-		glPopMatrix();
-
+		backGround();
 		glEnable(GL_DEPTH_TEST);
 	}
 }
@@ -3692,6 +3798,7 @@ void lighting() {
 	glPushMatrix();
 	glDisable(GL_LIGHTING);
 	glTranslatef(lightPosition[0], lightPosition[1], lightPosition[2]);
+	glColor3f(1, 0, 0);
 	sphere(0.1);
 	glPopMatrix();
 
@@ -3705,75 +3812,41 @@ void lighting() {
 
 void display()
 {
-	switch (qNo)
-	{
-	case 1:
-	{
-		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glClearColor(1, 1, 1, 1);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glTranslatef(0, 0, tz);
-		//		sphereTexture(5, "sky.bmp");
+	projection();                           //projection
+	lighting();                             //lighting
 
-		projection();
-		lighting();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+	glTranslatef(0, 0, tz);                  //translate z axis
+	if (!isOrtho)
+		glRotatef(-Ry, 0, 1, 0);             //rotate the object if perspective
 
-		glTranslatef(0, 0, tz);
-		if (!isOrtho)
-			glRotatef(-Ry, 0, 1, 0);             //rotate the object if perspective
+	//////////////////////////////////////////////////////
+	glPushMatrix();
+	glScalef(0.5, 0.5, 0.5);
 
-		glPushMatrix();
-		glScalef(0.5, 0.5, 0.5);
-
-		if (walkRight == true || walkLeft == true) {   //walking
-			walking += walkingSp;
-		}
-		glTranslatef(0, 0, walking);
-		glTranslatef(flyingX, flyingY, 0);
-		glTranslatef(0, 0, slideMove);
-		glRotatef(sliding, 1, 0, 0);
-		headAndBody(bodyText[changeBody1], jointText[changeBody1]);
-		hand();
-		leg();
-		glPopMatrix();
-		if (sliding == 30) {
-			isTurbo = false;
-			for (int i = 0; i < sliding; sliding--)
-				sliding -= 0.01;
-		}
-		else if (sliding == -30) {
-			isTurbo = false;
-			for (int i = 0; i > sliding; sliding++)
-				sliding += 0.01;
-		}
-		glPopMatrix();
-		break;
-		//	glDisable(GL_TEXTURE_2D);
+	robotWalking();                            //walking
+	glTranslatef(flyingX, flyingY, 0);
+	glTranslatef(0, 0, slideMove);
+	glRotatef(sliding, 1, 0, 0);
+	headAndBody(bodyText[changeBody1], jointText[changeBody1]);
+	hand();
+	leg();
+	glPopMatrix();
+	if (sliding == 30) {
+		isTurbo = false;
+		for (int i = 0; i < sliding; sliding--)
+			sliding -= 0.01;
 	}
-	case 2:
-	{
-		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		projection();
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glPushMatrix();
-		
-
-		glPopMatrix();
-		break;
+	else if (sliding == -30) {
+		isTurbo = false;
+		for (int i = 0; i > sliding; sliding++)
+			sliding += 0.01;
 	}
-
-	default:
-		break;
-	};
-
 }
 //--------------------------------------------------------------------
 

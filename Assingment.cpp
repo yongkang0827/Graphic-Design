@@ -71,8 +71,8 @@ float posD[] = { 1,-1,0 };//diff light positionat right(5,0,0)
 //Texture
 BITMAP BMP;             //bitmap structure
 HBITMAP hBMP = NULL;    //bitmap handle
-LPCSTR bodyText[6] = { "black steel.bmp", "white.bmp" };
-LPCSTR jointText[3] = { "white.bmp","Rusty Black Steel.bmp" };
+LPCSTR bodyText[2] = { "black steel.bmp", "white.bmp"};
+LPCSTR jointText[2] = { "white.bmp","Rusty Black Steel.bmp" };
 int changeBody1 = 0, changeBody2 = 1, changeJoint1 = 0;
 bool isTexture = true;
 
@@ -100,8 +100,8 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			shoulderTurnRight = false;
 			headRotatex = 0;
 			headRotatey = 0;
-			weaponBig = false;
-			gunBig = false;
+			weaponSmall = true;
+			gunSmall = true;
 			walking = 0;
 			legMoveFront = false;
 			legMoveBack = false;
@@ -176,7 +176,8 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			gunSmall = false;
 		}
 		else if (wParam == 0x38) {                  //8 = save gun
-			gunSmall = true;
+			if(gunBig == true)
+				gunSmall = true;
 		}
 		else if (wParam == 0x4F)                    //o = gun shoot
 			gunShootMove = true;
@@ -187,7 +188,8 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			weaponSmall = false;
 		}
 		else if (wParam == 0x30) {                  //0 = weapon////////////////////////////////////////////////////////////////////////////
-			weaponSmall = true;
+			if (weaponBig == true)
+				weaponSmall = true;
 		}
 		else if (wParam == 0x50) {                 //p = weapon attack
 			if (weaponAttackMove == false)
@@ -304,18 +306,6 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			slideMove -= 0.3;
 		}
 		///////////////////////////////yong 
-		/*else if (wParam == 0xBD) {		// key -
-		if (isOrtho) {
-			if (orthoview < 5)
-				orthoview += 0.5;
-		}
-		}
-		else if (wParam == 0xBB) {		// key +
-		if (isOrtho) {
-			if (orthoview > 1)
-				orthoview -= 0.5;
-		}
-		}*/
 		//head rotate
 		else if (wParam == 'C') {
 		if (headRotatex > -20)
@@ -2055,6 +2045,7 @@ void gun() {
 			gunScale += gunSp;
 			gunTransUp = 0;
 			gunTransFront = 0;
+			gunTransNear = 0;
 			gunScaleSmall = 1;
 		}
 		glTranslatef(1, 0.35, 0);
@@ -3690,10 +3681,7 @@ void leg() {
 	glTranslatef(0.2, 0, 0);
 
 	glPushMatrix();                         //move whole right leg
-	/*if (legMoveFront == true && legMoveX < 20) {
-		legMoveX += legMoveSp;
-	}*/
-	glTranslatef(0, 0.6, 0);
+	glTranslatef(0, 0.6, 0);                //translate x and z
 	glRotatef(legMoveX, 1, 0, 0);
 	glRotatef(-legMoveY, 0, 0, 1);
 	glTranslatef(0, -0.6, 0);
@@ -3756,6 +3744,10 @@ void robotWalking() {
 
 /////////////////////////////////////////Projection
 void backGround() {
+	if (!isTexture)
+	{
+		glColor3f(0, 0, 0);
+	}
 	glPushMatrix();
 	glTranslatef(0, 0, -0.5);
 	sphereTexture(2, "sky.bmp");

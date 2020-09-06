@@ -71,7 +71,7 @@ float posD[] = { 1,-1,0 };//diff light positionat right(5,0,0)
 //Texture
 BITMAP BMP;             //bitmap structure
 HBITMAP hBMP = NULL;    //bitmap handle
-LPCSTR bodyText[2] = { "black steel.bmp", "white.bmp"};
+LPCSTR bodyText[2] = { "black steel.bmp", "white.bmp" };
 LPCSTR jointText[2] = { "white.bmp","Rusty Black Steel.bmp" };
 int changeBody1 = 0, changeBody2 = 1, changeJoint1 = 0;
 bool isTexture = true;
@@ -100,8 +100,6 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			shoulderTurnRight = false;
 			headRotatex = 0;
 			headRotatey = 0;
-			weaponSmall = true;
-			gunSmall = true;
 			walking = 0;
 			legMoveFront = false;
 			legMoveBack = false;
@@ -114,6 +112,10 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			flyingX = 0;
 			flyingY = 0;
 			isTurbo = false;
+			if(weaponBig == true)
+				weaponSmall = true;
+			if(gunBig == true)
+				gunSmall = true;
 		}
 
 		else if (wParam == 0x36)                      //6 = change color
@@ -181,7 +183,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			gunSmall = false;
 		}
 		else if (wParam == 0x38) {                  //8 = save gun
-			if(gunBig == true)
+			if (gunBig == true)
 				gunSmall = true;
 		}
 		else if (wParam == 0x4F)                    //o = gun shoot
@@ -268,47 +270,47 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				tx += tSpeed;
 		}
 		else if (wParam == 'Q') {             //key q = view rotate
-			if (isOrtho && tz < 0.8) 
+			if (isOrtho && tz < 0.8)
 				tz += tSpeed;
-			else if (!isOrtho && tz < 1.4) 
+			else if (!isOrtho && tz < 1.4)
 				tz += tSpeed;
 		}
 		else if (wParam == 'E') {             //key e = view rotate
-			if(isOrtho && tz > -0.1)
+			if (isOrtho && tz > -0.1)
 				tz -= tSpeed;
-			else if(!isOrtho && tz > -0.5)
+			else if (!isOrtho && tz > -0.5)
 				tz -= tSpeed;
 		}
 
 		else if (wParam == VK_UP) {
-		if (flyingY < 1) {
-			isTurbo = true;
-			flyingY += 0.1;
-		}
+			if (flyingY < 1) {
+				isTurbo = true;
+				flyingY += 0.1;
+			}
 		}
 		else if (wParam == VK_DOWN) {
-		if (flyingY <= 0) {
-			isTurbo = false;
-		}
-		else {
-			isTurbo = true;
-			flyingY -= 0.1;
-		}
+			if (flyingY <= 0) {
+				isTurbo = false;
+			}
+			else {
+				isTurbo = true;
+				flyingY -= 0.1;
+			}
 		}
 		else if (wParam == VK_LEFT) {
-		if (flyingX >= -1) {
-			flyingX -= 0.1;
-		}
+			if (flyingX >= -1) {
+				flyingX -= 0.1;
+			}
 		}
 		else if (wParam == VK_RIGHT) {
-		if (flyingX <= 1) {
-			flyingX += 0.1;
-		}
+			if (flyingX <= 1) {
+				flyingX += 0.1;
+			}
 		}
 
 		else if (wParam == 0x5A)      //key z = object z 
 		{
-			if (slideMove < 2) {
+			if (slideMove < 1) {
 				isTurbo = true;
 				sliding = 30;
 				slideMove += 0.3;
@@ -325,39 +327,39 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		///////////////////////////////yong 
 		//head rotate
 		else if (wParam == 'C') {
-		if (headRotatex > -20)
-			headRotatex -= 0.5;
+			if (headRotatex > -20)
+				headRotatex -= 0.5;
 		}
 		else if (wParam == 'B') {
-		if (headRotatex < 20)
-			headRotatex += 0.5;
+			if (headRotatex < 20)
+				headRotatex += 0.5;
 		}
 		else if (wParam == 'G') {
-		if (headRotatey < 5)
-			headRotatey += 0.5;
+			if (headRotatey < 5)
+				headRotatey += 0.5;
 		}
 		else if (wParam == 'V') {
-		if (headRotatey > -3)
-			headRotatey -= 0.5;
+			if (headRotatey > -3)
+				headRotatey -= 0.5;
 		}
 		//Light
 		else if (wParam == 'I')                          //I = light up
-		lightPosition[1] += lSpeed;
+			lightPosition[1] += lSpeed;
 
 		else if (wParam == 'K')                          //K = light down
-		lightPosition[1] -= lSpeed;
+			lightPosition[1] -= lSpeed;
 
 		else if (wParam == 'J')                           //J = light left	
-		lightPosition[0] -= lSpeed;
+			lightPosition[0] -= lSpeed;
 
 		else if (wParam == 'L')                          //L = light right
-		lightPosition[0] += lSpeed;
+			lightPosition[0] += lSpeed;
 
 		else if (wParam == 'Y')                         //Y = light back
-		lightPosition[2] -= lSpeed;
+			lightPosition[2] -= lSpeed;
 
 		else if (wParam == 'U')                         //U = light front
-		lightPosition[2] += lSpeed;
+			lightPosition[2] += lSpeed;
 		else if (wParam == VK_SPACE)                         //space = light
 		{
 			isLightOn = !isLightOn;
@@ -3648,7 +3650,7 @@ void leg() {
 	}
 
 	glTranslatef(0, 0.6, 0);                                //Rotate whole leg
-	glRotatef(legMoveX, 1, 0, 0); 
+	glRotatef(legMoveX, 1, 0, 0);
 	glRotatef(-legMoveY, 0, 0, 1);
 	glTranslatef(0, -0.6, 0);
 	//////////////////////////////////////////////Left Leg
@@ -3753,9 +3755,9 @@ void robotWalking() {
 			walkLeft = false;
 		}
 	}
-	if(isOrtho)
+	if (isOrtho)
 		glTranslatef(0, 0, walking);
-	else if(!isOrtho)
+	else if (!isOrtho)
 		glTranslatef(0, 0, -walking);
 }
 
@@ -3783,7 +3785,7 @@ void projection() {
 	glLoadIdentity();
 
 	glTranslatef(tx, ty, 0);
-	
+
 	if (isOrtho) {
 		glOrtho(-1, 1, -1, 1, -1, 10);
 		glRotatef(Ry, 0, 1, 0);
@@ -3845,7 +3847,7 @@ void display()
 	glScalef(0.5, 0.5, 0.5);
 
 	robotWalking();                            //walking
-	flying();
+	flying();                                  //flying
 	headAndBody(bodyText[changeBody1], jointText[changeBody1]);
 	hand();
 	leg();
